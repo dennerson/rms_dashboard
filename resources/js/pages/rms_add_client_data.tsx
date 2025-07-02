@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Button, Col, Drawer, Form, Input, Row, Select, Space, message } from 'antd';
 import { CirclePlus } from 'lucide-react';
+import axios from 'axios';
 
 
 const { Option } = Select;
 
-const App: React.FC = () => {
+const ClientForm: React.FC<{ onClientSaved?: () => void }> = ({ onClientSaved }) => {
     const [open, setOpen] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
+    const [form] = Form.useForm();
 
     const showDrawer = () => {
     setOpen(true);
@@ -17,13 +19,23 @@ const App: React.FC = () => {
     setOpen(false);
     };
 
-    const success = () => {
-        setOpen(false);
-        messageApi.open({
-        type: 'success',
-        content: 'saved successfully.',
-        });
-    };
+    const success = async () => {
+        try {
+            const values = await form.validateFields();
+            await axios.post('/api/clients', values);
+            messageApi.success('CLient saved successfully');
+            setOpen(false);
+            form.resetFields();
+            if (typeof onClientSaved === 'function') {
+                onClientSaved();
+            }
+            // if (onClientSaved) onClientSaved();
+        }catch (error) {
+            console.error(error);
+            messageApi.error('Failed to save client');
+        }
+    }
+
 
     return (
         <>
@@ -55,11 +67,11 @@ const App: React.FC = () => {
                     </Space>
                 }
             >
-                <Form layout="vertical" hideRequiredMark>
+                <Form layout="vertical" form={form} hideRequiredMark>
                     <Row gutter={16}>
                         <Col span={12}>
                             <Form.Item
-                            name="client_name"
+                            name="client"
                             label="Client Name"
                             rules={[{ required: true, message: 'Please enter client name' }]}
                             >
@@ -68,7 +80,7 @@ const App: React.FC = () => {
                         </Col>
                         <Col span={12}>
                             <Form.Item
-                            name="lienholder_name"
+                            name="lienholder"
                             label="Lienholder Name"
                             rules={[{ required: true, message: 'Please enter lienholder name' }]}
                             >
@@ -356,7 +368,7 @@ const App: React.FC = () => {
 
                         <Col span={12}>
                             <Form.Item
-                            name="system"
+                            name="use_system"
                             label="System"
                             rules={[{ required: true, message: 'Please enter system used' }]}
                             >
@@ -370,4 +382,4 @@ const App: React.FC = () => {
     );
 };
 
-export default App;
+export default ClientForm;

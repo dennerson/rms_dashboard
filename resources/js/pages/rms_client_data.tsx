@@ -1,11 +1,11 @@
 import AppLayout from '@/layouts/app-layout';
 import ClientForm from '@/pages/rms_add_client_data';
-import DeleteButton from '@/components/ui/delete_button';
+import ClientTable from '@/components/ui/clients_table';
 import { type BreadcrumbItem } from '@/types';
 import React, {useState} from 'react';
-import { Card, Flex, Layout, Upload, Button, Table, message } from 'antd';
-import type { GetProp, UploadProps, UploadFile, TableColumnsType } from 'antd';
-import { FilePenLine, FileUp } from 'lucide-react';
+import { Card, Flex, Layout, Upload, Button, message } from 'antd';
+import type { GetProp, UploadProps, UploadFile } from 'antd';
+import { FileUp } from 'lucide-react';
 
 
 const { Footer, Content} = Layout;
@@ -38,60 +38,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-interface DataType {
-    key: React.Key;
-    name: string;
-    age:number;
-    address: string;
-}
-
-const columns: TableColumnsType<DataType> = [
-    {
-        title: 'Full Name',
-        width: 100,
-        dataIndex: 'name',
-        key: 'name',
-        fixed: 'left',
-    },
-    {
-        title: 'Age',
-        width: 100,
-        dataIndex: 'age',
-        key: 'age',
-        fixed: 'left',
-        sorter: true,
-    },
-    { title: 'Column 1', dataIndex: 'address', key: '1'},
-    { title: 'Column 2', dataIndex: 'address', key: '2'},
-    { title: 'Column 3', dataIndex: 'address', key: '3'},
-    { title: 'Column 4', dataIndex: 'address', key: '4'},
-    { title: 'Column 5', dataIndex: 'address', key: '5'},
-    { title: 'Column 6', dataIndex: 'address', key: '6'},
-    { title: 'Column 7', dataIndex: 'address', key: '7'},
-    { title: 'Column 8', dataIndex: 'address', key: '8'},
-    { title: 'Column 9', dataIndex: 'address', key: '9'},
-    {
-        title: 'Action',
-        key: 'operation',
-        fixed: 'right',
-        width: 100,
-        render: () =>
-            <>
-                <div className='flex'>
-                    <a href="#" className='mr-2'><FilePenLine size={18} color="#0d61e7"/></a>
-                    {/* <ClientForm /> */}
-
-                    <DeleteButton />
-                </div>
-            </>,
-    },
-];
-
-// data
-const dataSource = Array.from({ length: 100 }).map<DataType>((_, i) => ({
-    key: i, name: `Edward King ${i}`, age: 32, address: `London, Park Lane no. ${i}`,
-}));
-
 // upload
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
@@ -100,6 +46,16 @@ const App: React.FC = () => {
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [uploading, setUploading] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
+    const [refreshFlag, setRefreshFlag] = useState(false);
+    const [editingClient, setEditingClient] = useState(null);
+
+    const handleEditClient = (clientData) => {
+        setEditingClient(clientData);
+    };
+
+    const refreshTable = () => {
+        setRefreshFlag(prev => !prev);
+    };
 
     // upload
     const handleUpload = () => {
@@ -175,7 +131,7 @@ const App: React.FC = () => {
                                                 </div>
                                             </div>
                                             <div className=' ml-4'>
-                                                <ClientForm />
+                                                <ClientForm onClientSaved={refreshTable} editingClient={editingClient} onCloseEdit={() => setEditingClient(null)} />
                                             </div>
                                         </div>
                                     </Card>
@@ -184,11 +140,7 @@ const App: React.FC = () => {
                             <Content style={contentStyle}>
                                 <div className='ml-4 mr-4'>
                                     <div>
-                                        <Table<DataType>
-                                            columns={columns}
-                                            dataSource={dataSource}
-                                            scroll={{ x: 'max-content', y: 50 * 5  }}
-                                        />
+                                        <ClientTable refreshFlag={refreshFlag} onRefresh={refreshTable} onEditCLient={handleEditClient} />
                                     </div>
                                 </div>
                             </Content>
