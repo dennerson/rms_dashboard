@@ -27,15 +27,22 @@ const App: React.FC = () => (
     <>
         <div>
             <Row>
-                <div className='flex'>
-                    <div className='mr-18'><p className='mr-13'>Client & Lienholder:</p>
-                        <Col span={8}><Cascader options={options} onChange={onChange} placeholder="Client & Lienholder" /></Col>
-                    </div>
-                    <div className='mr-18'><p className='mr-26'>Order Type:</p>
-                        <Col span={8}><Cascader options={options} onChange={onChange} placeholder="Order Type" /></Col>
-                    </div>
-                    <div className=''><p className='mr-26'>Two Stop Fee:</p>
-                        <Col span={8}><Cascader options={options} onChange={onChange} placeholder="Two Stop Fee" /></Col>
+                <div className='flex mb-4 ml-4 mr-4 overflow-x-scroll'>
+                    <div className='flex'>
+                        <div className='mr-4 ml-4'>
+                            <p className='mr-10 ml-0'>Client & Lienholder:</p>
+                            <Col span={8}><Cascader options={options} onChange={onChange} placeholder="Please choose type" /></Col>
+                        </div>
+
+                        <div className='mr-4 ml-4'>
+                            <p className='mr-10 ml-0'>Order Type:</p>
+                            <Col span={8}><Cascader options={options} onChange={onChange} placeholder="Please choose type" /></Col>
+                        </div>
+
+                        <div className='mr-4 ml-4 content-start'>
+                            <p className='mr-10 ml-0'>Two Stop Fee:</p>
+                            <Col span={8}><Cascader options={options} onChange={onChange} placeholder="Please choose type" /></Col>
+                        </div>
                     </div>
                 </div>
             </Row>

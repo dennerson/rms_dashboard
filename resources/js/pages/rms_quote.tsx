@@ -67,7 +67,8 @@ const App: React.FC = () => {
                     <Flex gap="middle" wrap className="relative min-h-[100vh] flex-1 overflow-hidden">
                         <Layout style={layoutStyle}>
                             <Content style={contentStyle}>
-                                <div className='mb-4 ml-4 mr-4'>
+                                <Card style={contentStyle}>
+                                    <div className='mb-4 ml-4 mr-4'>
                                     <>
                                         <div className='mt-4'>
                                             <Card hoverable>
@@ -93,7 +94,7 @@ const App: React.FC = () => {
                                                     </>
 
                                                     <Form.Item label={null} style={{marginBottom:0}}>
-                                                        <Button type="primary" htmlType="submit" >
+                                                        <Button color="default" variant="outlined" >
                                                             Submit
                                                         </Button>
                                                     </Form.Item>
@@ -117,6 +118,7 @@ const App: React.FC = () => {
                                         </div>
                                     </>
                                 </div>
+                                </Card>
                             </Content>
 
                             <Footer style={footerStyle}>

@@ -37,6 +37,38 @@ const columns: TableColumnsType<DataType> = [
     title: 'Mileage Fee',
     dataIndex: 'mileage_fee',
   },
+  {
+    title: 'Mileage Fee',
+    dataIndex: 'mileage_fee',
+  },
+  {
+    title: 'Mileage Fee',
+    dataIndex: 'mileage_fee',
+  },
+  {
+    title: 'Mileage Fee',
+    dataIndex: 'mileage_fee',
+  },
+  {
+    title: 'Mileage Fee',
+    dataIndex: 'mileage_fee',
+  },
+  {
+    title: 'Mileage Fee',
+    dataIndex: 'mileage_fee',
+  },
+  {
+    title: 'Mileage Fee',
+    dataIndex: 'mileage_fee',
+  },
+  {
+    title: 'Mileage Fee',
+    dataIndex: 'mileage_fee',
+  },
+  {
+    title: 'Mileage Fee',
+    dataIndex: 'mileage_fee',
+  },
 ];
 
 const dataSource: DataType[] = [
@@ -80,6 +112,7 @@ const App: React.FC = () => {
         columns={columns}
         dataSource={dataSource}
         pagination={false}
+        scroll={{ x: 'max-content' }}
         summary={(pageData) => {
           let totalBorrow = 0;
           let totalRepayment = 0;

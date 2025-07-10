@@ -75,6 +75,7 @@ const App: React.FC = () => {
         bordered
         columns={columns}
         dataSource={dataSource}
+        scroll={{ x: 'max-content' }}
         pagination={false}
         summary={(pageData) => {
           let totalBorrow = 0;

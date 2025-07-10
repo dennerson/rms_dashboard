@@ -11,12 +11,13 @@ use App\Http\Controllers\ApiController;
 
 Route::get('/clients', [ApiController::class, 'getClients']);
 Route::post('/clients', [ApiController::class, 'createClient']);
-Route::get('/clients/{id}', [ApiController::class, 'updateClient']);
+Route::put('/clients/{id}', [ApiController::class, 'updateClient']);
 Route::delete('/clients/{id}', [ApiController::class, 'deleteClient']);
+Route::post('/clients/upload', [ApiController::class, 'uploadFile']);
 
 Route::get('/zipcodes', [ApiController::class, 'getZipcodes']);
 Route::post('/save-data', [ApiController::class, 'saveZipCodeData']);
-Route::post('/upload', [ApiController::class, 'uploadFile']);
+// Route::post('/clients/upload', [ApiController::class, 'uploadFile']);
 
 
-Route::get('/ping', fn() => response()->json(['status' => 'ok']));
+// Route::get('/ping', fn() => response()->json(['status' => 'ok']));

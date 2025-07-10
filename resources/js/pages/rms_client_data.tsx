@@ -1,10 +1,9 @@
 import AppLayout from '@/layouts/app-layout';
 import ClientForm from '@/pages/rms_add_client_data';
 import ClientTable from '@/components/ui/clients_table';
-import { type BreadcrumbItem } from '@/types';
 import React, {useState} from 'react';
 import { Card, Flex, Layout, Upload, Button, message } from 'antd';
-import type { GetProp, UploadProps, UploadFile } from 'antd';
+import type { UploadProps, UploadFile } from 'antd';
 import { FileUp } from 'lucide-react';
 
 
@@ -31,27 +30,20 @@ const layoutStyle = {
   backgroundColor: '#DBE2E9',
 };
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Client Data',
-        href: '/rms-client-data',
-    },
-];
-
 // upload
-type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
+type FileType = File;
 
-const App: React.FC = () => {
+const ClientList: React.FC = () => {
 
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [uploading, setUploading] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
-    const [refreshFlag, setRefreshFlag] = useState(false);
-    const [editingClient, setEditingClient] = useState(null);
 
-    const handleEditClient = (clientData) => {
-        setEditingClient(clientData);
-    };
+    const [refreshFlag, setRefreshFlag] = useState(false);
+    const [selectedClient, setSelectedClient] = useState(null);
+
+    const handleEdit = (client) => setSelectedClient(client);
+    const clearEdit = () => setSelectedClient(null);
 
     const refreshTable = () => {
         setRefreshFlag(prev => !prev);
@@ -59,35 +51,37 @@ const App: React.FC = () => {
 
     // upload
     const handleUpload = () => {
+        if (fileList.length === 0) {
+        messageApi.error('Please select a file to upload.');
+        return;
+        }
+
         const formData = new FormData();
-        fileList.forEach((file) => {
-            formData.append('files[]', file as FileType);
-        });
+        formData.append('file', fileList[0] as FileType);
+
         setUploading(true);
-        fetch('https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload', {
-            method: 'POST',
-            body: formData,
+
+        fetch('/api/clients/upload', {
+        method: 'POST',
+        body: formData,
         })
         .then((res) => res.json())
         .then(() => {
             setFileList([]);
             messageApi.open({
-            type: 'success',
-            content: 'Upload successfully',
-        });
+                type: 'success',
+                content: 'Upload successfully',
+            });
+            setRefreshFlag(prev => !prev);
         })
-        .catch(() => {
-            messageApi.open({
-            type: 'error',
-            content: 'An Error occured',
-        });
+        .catch((err) => {
+            console.error(err);
+            messageApi.error(err.message || 'Upload failed');
         })
-        .finally(() => {
-            setUploading(false);
-        });
+        .finally(() => setUploading(false));
     };
 
-    const props: UploadProps = {
+    const uploadProps: UploadProps = {
         onRemove: (file) => {
             const index = fileList.indexOf(file);
             const newFileList = fileList.slice();
@@ -95,16 +89,16 @@ const App: React.FC = () => {
             setFileList(newFileList);
         },
         beforeUpload: (file) => {
-            setFileList([...fileList, file]);
-
+            setFileList([file]);
             return false;
         },
         fileList,
     };
-
     return (
         <>
-            <AppLayout breadcrumbs={breadcrumbs}>
+            <AppLayout
+            breadcrumbs={[{ title: 'Client Data', href: '/rms-client-data'}]}
+            >
                 <>
                 {contextHolder}
                     <Flex gap="middle" wrap className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
@@ -112,35 +106,48 @@ const App: React.FC = () => {
                             <div className='ml-4 justify-center mr-4'>
                                 <div className='mb-4 mt-4'>
                                     <Card hoverable>
-                                        <div className='flex'>
-                                            <div className='flex-1'>
-                                                <div className='flex gap-3'>
-
-                                                    <Upload {...props} >
-                                                        <Button><FileUp size={16} color="#2c2b2b"/>Upload Client Data</Button>
+                                        <div className="flex flex-wrap md:flex-nowrap gap-4">
+                                            <div className="flex-1 min-w-[250px]">
+                                                <div className="flex flex-wrap sm:flex-nowrap gap-3">
+                                                    <Upload {...uploadProps}>
+                                                        <Button>
+                                                            <FileUp size={16} color="#2c2b2b" />
+                                                            Upload Client Data
+                                                        </Button>
                                                     </Upload>
 
-                                                <Button
-                                                    type='primary'
-                                                    onClick={handleUpload}
-                                                    disabled={fileList.length === 0}
-                                                    loading={uploading}
-                                                >
-                                                    {uploading ? 'Uploading...' : 'Upload'}
-                                                </Button>
+                                                    <Button
+                                                        type="primary"
+                                                        onClick={handleUpload}
+                                                        disabled={fileList.length === 0}
+                                                        loading={uploading}
+                                                    >
+                                                        {uploading ? 'Uploading...' : 'Upload'}
+                                                    </Button>
                                                 </div>
                                             </div>
-                                            <div className=' ml-4'>
-                                                <ClientForm onClientSaved={refreshTable} editingClient={editingClient} onCloseEdit={() => setEditingClient(null)} />
+
+                                            <div className="w-full md:w-auto min-w-[100px]">
+                                                <ClientForm
+                                                    client={selectedClient}
+                                                    onClose={clearEdit}
+                                                    onSubmitted={refreshTable}
+                                                />
                                             </div>
                                         </div>
                                     </Card>
                                 </div>
                             </div>
                             <Content style={contentStyle}>
-                                <div className='ml-4 mr-4'>
+                                <div className='ml-4 mr-4 mb-4'>
                                     <div>
-                                        <ClientTable refreshFlag={refreshFlag} onRefresh={refreshTable} onEditCLient={handleEditClient} />
+                                        <Card hoverable>
+                                            <ClientTable
+                                                refreshFlag={refreshFlag}
+                                                onEdit={handleEdit}
+
+                                            />
+                                        </Card>
                                     </div>
                                 </div>
                             </Content>
@@ -156,5 +163,8 @@ const App: React.FC = () => {
 };
 
 
-export default App;
+export default ClientList;
+
+
+
 

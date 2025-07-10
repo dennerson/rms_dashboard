@@ -86,10 +86,10 @@ const CLientForm = ({ client, onSubmitted }) => {
                 variant="outlined"
                 >
                 <CirclePlus size={15} color="#0d61e7" />
-                Add Client
+                Add Branch
             </Button>
             <Drawer
-                title={client ? 'Edit Client' : 'Add Client'}
+                title={client ? 'Edit Branch' : 'Add Branch'}
                 width={720}
                 onClose={handleClose}
                 open={open}

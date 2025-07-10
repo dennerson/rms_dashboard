@@ -5,7 +5,9 @@ import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 
 import { Card, Layout} from 'antd';
-import LineChart from '@/components/charts/userchart';
+import LineChart from '@/components/charts/LineChart';
+import BarChart from '@/components/charts/BarChart';
+import PieChart from '@/components/charts/PieChart';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -56,12 +58,12 @@ export default function Dashboard() {
                                     </div>
                                     <div className="relative aspect-3/2 overflow-hidden rounded-xl ">
                                         <Card title="Success Appointments" className="w-full max-w-5xl mx-auto p-4" size='small' hoverable>
-                                            <LineChart />
+                                            <BarChart />
                                         </Card>
                                     </div>
                                     <div className="relative aspect-3/2 overflow-hidden rounded-xl ">
                                         <Card title="Cancelled Appointments" size='small' hoverable>
-                                            <LineChart />
+                                            <PieChart />
                                         </Card>
 
                                     </div>

@@ -7,27 +7,9 @@ import axios from 'axios';
 const DeleteButton: React.FC = ({ clientId, onDeleted }) => {
     const [messageApi, contextHolder] = message.useMessage();
 
-    // const confirm: PopconfirmProps['onConfirm'] = (e) => {
-    //     console.log(e);
-        // messageApi.open({
-        //     type: 'success',
-        //     content: 'client deleted successfully.',
-        //     });
-
-    // };
-
-    // const cancel: PopconfirmProps['onCancel'] = (e) => {
-    //     console.log(e);
-    //     messageApi.open({
-    //         type: 'warning',
-    //         content: 'There are error in deleting client.',
-    //         });
-    // };
-
     const handleDelete:PopconfirmProps['onConfirm'] = async () => {
         try {
             await axios.delete(`/api/clients/${clientId}`);
-            // message.success('Client deleted successfully');
             messageApi.open({
                 type: 'success',
                 content: 'client deleted successfully.',
@@ -36,11 +18,11 @@ const DeleteButton: React.FC = ({ clientId, onDeleted }) => {
                 onDeleted();
             }
         }catch (error) {
-            message.error('Failed to delete client');
-            // messageApi.open({
-            //     type: 'warning',
-            //     content: 'There are error in deleting client.',
-            // });
+            // message.error('Failed to delete client');
+            messageApi.open({
+                type: 'warning',
+                content: 'There are error in deleting client.',
+            });
             console.error(error);
         }
     };

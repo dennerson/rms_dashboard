@@ -1,32 +1,25 @@
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
-import React from 'react';
-import { Flex, Layout } from 'antd';
+import BranchForm from '@/pages/BranchListForm';
+import BranchTable from '@/components/ui/BranchListTable';
+import React, {useState} from 'react';
+import { Card, Flex, Layout, Upload, Button, message } from 'antd';
+import type { UploadProps, UploadFile } from 'antd';
+import { FileUp } from 'lucide-react';
 
-const { Header, Footer, Content} = Layout;
 
-const headerStyle: React.CSSProperties = {
-  textAlign: 'center',
-  color: '#fff',
-  height: 64,
-  paddingInline: 48,
-  lineHeight: '64px',
-  backgroundColor: '#3E424B',
-};
+const { Footer, Content} = Layout;
 
 const contentStyle: React.CSSProperties = {
   textAlign: 'center',
   minHeight: 120,
   lineHeight: 120,
-  color: '#fff',
-//   backgroundColor: '#0958d9',
+  color: '#F2F3F4',
 };
 
 const footerStyle: React.CSSProperties = {
   textAlign: 'center',
-  color: '#fff',
-//   margin-top: 2,
-  backgroundColor: '#3E424B',
+  color: '#F2F3F4',
+  backgroundColor: 'oklch(0.145 0 0)',
 };
 
 const layoutStyle = {
@@ -34,134 +27,128 @@ const layoutStyle = {
   overflow: 'hidden',
   width: 'calc(100% - 8px)',
   maxWidth: 'calc(100% - 8px)',
+  backgroundColor: '#DBE2E9',
 };
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'BranchList',
-        href: '/rms-branch-list',
-    },
-];
+// upload
+type FileType = File;
 
+const BranchList: React.FC = () => {
 
-import { Table } from 'antd';
-import { TableColumnsType } from 'antd';
-// import { createStyles } from 'antd-style';
-import { Pagination } from 'antd';
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
+    const [uploading, setUploading] = useState(false);
+    const [messageApi, contextHolder] = message.useMessage();
 
-// const useStyle = createStyles(({ css, token }) => {
-//   const { antCls } = token;
-//   return {
-//     customTable: css`
-//       ${antCls}-table {
-//         ${antCls}-table-container {
-//           ${antCls}-table-body,
-//           ${antCls}-table-content {
-//             scrollbar-width: thin;
-//             scrollbar-color: #eaeaea transparent;
-//             scrollbar-gutter: stable;
-//           }
-//         }
-//       }
-//     `,
-//   };
-// });
+    const [refreshFlag, setRefreshFlag] = useState(false);
+    const [selectedClient, setSelectedClient] = useState(null);
 
-interface DataType {
-    key: React.Key;
-    name: string;
-    age:number;
-    address: string;
-}
+    const handleEdit = (client) => setSelectedClient(client);
+    const clearEdit = () => setSelectedClient(null);
 
-const columns: TableColumnsType<DataType> = [
-    {
-        title: 'Full Name',
-        width: 100,
-        dataIndex: 'name',
-        key: 'name',
-        fixed: 'left',
-    },
-    {
-        title: 'Age',
-        width: 100,
-        dataIndex: 'age',
-        key: 'age',
-        fixed: 'left',
-        sorter: true,
-    },
-    { title: 'Column 1', dataIndex: 'address', key: '1'},
-    { title: 'Column 2', dataIndex: 'address', key: '2'},
-    { title: 'Column 3', dataIndex: 'address', key: '3'},
-    { title: 'Column 4', dataIndex: 'address', key: '4'},
-    { title: 'Column 5', dataIndex: 'address', key: '5'},
-    { title: 'Column 6', dataIndex: 'address', key: '6'},
-    { title: 'Column 7', dataIndex: 'address', key: '7'},
-    { title: 'Column 8', dataIndex: 'address', key: '8'},
-    { title: 'Column 9', dataIndex: 'address', key: '9'},
-    { title: 'Column 10', dataIndex: 'address', key: '10'},
-    { title: 'Column 11', dataIndex: 'address', key: '11'},
-    { title: 'Column 12', dataIndex: 'address', key: '12'},
-    { title: 'Column 13', dataIndex: 'address', key: '13'},
-    { title: 'Column 14', dataIndex: 'address', key: '14'},
-    { title: 'Column 15', dataIndex: 'address', key: '15'},
-    { title: 'Column 16', dataIndex: 'address', key: '16'},
-    { title: 'Column 17', dataIndex: 'address', key: '17'},
-    { title: 'Column 18', dataIndex: 'address', key: '18'},
-    { title: 'Column 19', dataIndex: 'address', key: '19'},
-    { title: 'Column 20', dataIndex: 'address', key: '20'},
-    {
-        title: 'Action',
-        key: 'operation',
-        fixed: 'right',
-        width: 100,
-        render: () => <a>action</a>,
-    },
-];
+    const refreshTable = () => {
+        setRefreshFlag(prev => !prev);
+    };
 
-const dataSource: DataType[] = [
-    {key: '1', name: 'Olivia', age: 32, address: 'London'},
-    {key: '2', name: 'John', age: 42, address: 'New York'},
-    {key: '3', name: 'Jack', age: 28, address: 'Jerusalem'},
-    {key: '4', name: 'Linda', age: 35, address: 'Paris' },
-    {key: '5', name: 'Tom', age: 40, address: 'Manila'},
-];
+    // upload
+    const handleUpload = () => {
+        if (fileList.length === 0) {
+        messageApi.error('Please select a file to upload.');
+        return;
+        }
 
-const App: React.FC = () => {
-    // const { styles } = useStyle();
+        const formData = new FormData();
+        formData.append('file', fileList[0] as FileType);
 
+        setUploading(true);
+
+        fetch('/api/clients/upload', {
+        method: 'POST',
+        body: formData,
+        })
+        .then((res) => res.json())
+        .then(() => {
+            setFileList([]);
+            messageApi.open({
+                type: 'success',
+                content: 'Upload successfully',
+            });
+            setRefreshFlag(prev => !prev);
+        })
+        .catch((err) => {
+            console.error(err);
+            messageApi.error(err.message || 'Upload failed');
+        })
+        .finally(() => setUploading(false));
+    };
+
+    const uploadProps: UploadProps = {
+        onRemove: (file) => {
+            const index = fileList.indexOf(file);
+            const newFileList = fileList.slice();
+            newFileList.splice(index, 1);
+            setFileList(newFileList);
+        },
+        beforeUpload: (file) => {
+            setFileList([file]);
+            return false;
+        },
+        fileList,
+    };
     return (
         <>
-            <AppLayout breadcrumbs={breadcrumbs}>
+            <AppLayout
+            breadcrumbs={[{ title: 'Branch List', href: '/rms-branch-list'}]}
+            >
                 <>
+                {contextHolder}
                     <Flex gap="middle" wrap className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
                         <Layout style={layoutStyle}>
-                            <Header style={headerStyle}>
-                                {/* <h1>Recovery Management Solutions</h1>
-                                <p>Professional Repossession Company</p> */}
-                            </Header>
-                            <div>
-                                <div>
-                                    <p>input here</p>
+                            <div className='ml-4 justify-center mr-4'>
+                                <div className='mb-4 mt-4'>
+                                    <Card hoverable>
+                                        <div className="flex flex-wrap md:flex-nowrap gap-4">
+                                            <div className="flex-1 min-w-[250px]">
+                                                <div className="flex flex-wrap sm:flex-nowrap gap-3">
+                                                    <Upload {...uploadProps}>
+                                                        <Button>
+                                                            <FileUp size={16} color="#2c2b2b" />
+                                                            Upload Branch Data
+                                                        </Button>
+                                                    </Upload>
+
+                                                    <Button
+                                                        type="primary"
+                                                        onClick={handleUpload}
+                                                        disabled={fileList.length === 0}
+                                                        loading={uploading}
+                                                    >
+                                                        {uploading ? 'Uploading...' : 'Upload'}
+                                                    </Button>
+                                                </div>
+                                            </div>
+
+                                            <div className="w-full md:w-auto min-w-[100px]">
+                                                <BranchForm
+                                                    client={selectedClient}
+                                                    onClose={clearEdit}
+                                                    onSubmitted={refreshTable}
+                                                />
+                                            </div>
+                                        </div>
+                                    </Card>
                                 </div>
                             </div>
                             <Content style={contentStyle}>
-                                <div>
-                                    <Table<DataType>
-                                        // className={styles.customTable}
-                                        pagination={false}
-                                        columns={columns}
-                                        dataSource={dataSource}
-                                        scroll={{ x: 'max-content' }}
-                                    />
-                                </div>
-                                <div className='mt-2'>
-                                    <Pagination
-                                        total={100}
-                                        showSizeChanger
-                                        showQuickJumper
-                                        showTotal={(total) => `Total ${total} items`}
-                                    />
+                                <div className='ml-4 mr-4 mb-4'>
+                                    <div>
+                                        <Card hoverable>
+                                            <BranchTable
+                                                refreshFlag={refreshFlag}
+                                                onEdit={handleEdit}
+
+                                            />
+                                        </Card>
+                                    </div>
                                 </div>
                             </Content>
                             <Footer style={footerStyle}>
@@ -176,4 +163,8 @@ const App: React.FC = () => {
 };
 
 
-export default App;
+export default BranchList;
+
+
+
+
