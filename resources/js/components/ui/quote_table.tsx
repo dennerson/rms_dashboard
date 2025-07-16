@@ -1,7 +1,7 @@
 import React from 'react';
 import { Flex, Table, Typography, Card } from 'antd';
 import type { TableColumnsType } from 'antd';
-import Branch from '@/components/ui/branch_dropdown_options'
+import Branch from '@/components/ui/BranchDropDownOption'
 
 const { Text } = Typography;
 

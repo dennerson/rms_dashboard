@@ -13,11 +13,10 @@ Route::get('/clients', [ApiController::class, 'getClients']);
 Route::post('/clients', [ApiController::class, 'createClient']);
 Route::put('/clients/{id}', [ApiController::class, 'updateClient']);
 Route::delete('/clients/{id}', [ApiController::class, 'deleteClient']);
-Route::post('/clients/upload', [ApiController::class, 'uploadFile']);
+Route::post('/clients/upload', [ApiController::class, 'uploadFileToClient']);
 
-Route::get('/zipcodes', [ApiController::class, 'getZipcodes']);
-Route::post('/save-data', [ApiController::class, 'saveZipCodeData']);
-// Route::post('/clients/upload', [ApiController::class, 'uploadFile']);
-
-
-// Route::get('/ping', fn() => response()->json(['status' => 'ok']));
+Route::get('/branches', [ApiController::class, 'getBranch']);
+Route::post('/branches', [ApiController::class, 'createBranch']);
+Route::put('/branches/{zip_code}', [ApiController::class, 'updateBranch']);
+Route::delete('/branches/{zip_code}', [ApiController::class, 'deleteBranch']);
+Route::post('/branches/upload', [ApiController::class, 'uploadFileToBranch']);

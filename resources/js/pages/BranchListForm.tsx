@@ -1,52 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Button, Col, Drawer, Form, Input, Row, Select, Space, message } from 'antd';
-import { CirclePlus } from 'lucide-react';
 
 
 const { Option } = Select;
 
-const CLientForm = ({ client, onSubmitted }) => {
+const BranchForm = ({ branch, onSubmitted, onClose, open, setOpen }) => {
     const [form] = Form.useForm();
-    const [open, setOpen] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
 
     useEffect(() => {
-        if (client) {
-            form.setFieldsValue(client);
-            setOpen(true);
+        if (branch && open) {
+            form.setFieldsValue(branch);
         }
-    }, [client]);
-
-    const showDrawer = () => {
-        form.resetFields();
-        setOpen(true);
-    };
+    }, [branch, open]);
 
     const handleClose = () => {
         form.resetFields();
         setOpen(false);
-        // onClose();
+        onClose?.();
     };
 
     const normalizedYesNoFields = (data: Record<string, any>) => {
         const yesNoFields = [
-            "involuntary_fee_contracted",
-            "voluntary_fee_contracted",
-            "impound_fee_contracted",
-            "military_base_fee_contracted",
-            "reservation_fee_contracted",
-            "oversized_fee_contracted",
-            "two_stop_fee_contracted",
-            "mileage_contracted",
-            "authorization_required",
-            "keys_required",
-            "client_forms",
-            "lienholder_forms",
+            "reservation",
+            "military",
         ];
 
         yesNoFields.forEach(field => {
-            if (data[field] === 'yes') data[field] = 1;
-            else if (data[field] === 'no') data[field] = 0;
+            if (data[field] === 'Yes') data[field] = 1;
+            else if (data[field] === 'No') data[field] = 0;
         });
 
         return data;
@@ -59,8 +41,8 @@ const CLientForm = ({ client, onSubmitted }) => {
 
             const cleanValues = normalizedYesNoFields(values);
 
-            const method = client ? 'put' : 'post';
-            const url = client ? `/api/clients/${client.id}` : '/api/clients';
+            const method = branch ? 'put' : 'post';
+            const url = branch ? `/api/branches/${branch.zip_code}` : '/api/branches';
             await fetch(url, {
                 method,
                 headers: {
@@ -68,28 +50,19 @@ const CLientForm = ({ client, onSubmitted }) => {
                 },
                 body: JSON.stringify(cleanValues),
             });
-            messageApi.success(`Client ${client ? 'updated' : 'created'} successfully`);
+            messageApi.success(`branch ${branch ? 'updated' : 'created'} successfully`);
             handleClose();
             onSubmitted();
         } catch (error) {
             console.error('An error occurred.', error);
-            messageApi.error('Error saving client');
+            messageApi.error('Error saving branch');
         }
     };
     return (
         <>
             {contextHolder}
-            <Button
-                onClick={showDrawer}
-                className='ml-2'
-                color="primary"
-                variant="outlined"
-                >
-                <CirclePlus size={15} color="#0d61e7" />
-                Add Branch
-            </Button>
             <Drawer
-                title={client ? 'Edit Branch' : 'Add Branch'}
+                title={branch ? 'Edit Branch' : 'Add Branch'}
                 width={720}
                 onClose={handleClose}
                 open={open}
@@ -114,308 +87,136 @@ const CLientForm = ({ client, onSubmitted }) => {
                     <Row gutter={16}>
                         <Col span={12}>
                             <Form.Item
-                            name="client"
-                            label="Client Name"
-                            rules={[{ required: true, message: 'Please enter client name' }]}
+                                name="zip_code"
+                                label="Zipcode"
+                                rules={[{ required: true, message: 'Please enter zipcode' }]}
                             >
-                                <Input placeholder="Please enter client name" />
+                                <Input placeholder="Please enter zipcode" />
                             </Form.Item>
                         </Col>
                         <Col span={12}>
                             <Form.Item
-                            name="lienholder"
-                            label="Lienholder Name"
-                            rules={[{ required: true, message: 'Please enter lienholder name' }]}
+                            name="branch_name"
+                            label="Branch name"
+                            rules={[{ required: true, message: 'Please enter Branch name' }]}
                             >
-                                <Input placeholder="Please enter lienholder name" />
+                                <Input placeholder="Please enter Branch name" />
                             </Form.Item>
                         </Col>
                         <Col span={12}>
                             <Form.Item
-                            name="involuntary_fee"
-                            label="Involuntary Fee"
-                            rules={[{ required: true, message: 'Please enter amount' }]}
+                            name="branch_zip"
+                            label="Branch zip"
+                            rules={[{ required: true, message: 'Please enter Branch zip' }]}
                             >
-                                <Input placeholder="Please enter involuntary fee amount" />
+                                <Input placeholder="Please enter involuntary fee Branch zip" />
                             </Form.Item>
                         </Col>
                         <Col span={12}>
                             <Form.Item
-                            name="involuntary_fee_contracted"
-                            label="Involuntary Fee Contracted?"
-                            rules={[{ required: true, message: 'Please choose the type' }]}
+                                name="city"
+                                label="City"
+                                rules={[{ required: true, message: 'Please enter City' }]}
                             >
-                            <Select placeholder="Please choose the type">
-                                <Option value="yes">Yes</Option>
-                                <Option value="no">No</Option>
-                            </Select>
-                            </Form.Item>
-                        </Col>
-
-                        <Col span={12}>
-                            <Form.Item
-                            name="voluntary_fee"
-                            label="Voluntary Fee"
-                            rules={[{ required: true, message: 'Please enter amount' }]}
-                            >
-                                <Input placeholder="Please enter voluntary fee amount" />
+                                <Input placeholder="Please enter City" />
                             </Form.Item>
                         </Col>
                         <Col span={12}>
                             <Form.Item
-                            name="voluntary_fee_contracted"
-                            label="Voluntary Fee Contracted?"
-                            rules={[{ required: true, message: 'Please choose the type' }]}
+                                name="state"
+                                label="State"
+                                rules={[{ required: true, message: 'Please enter State' }]}
                             >
-                            <Select placeholder="Please choose the type">
-                                <Option value="yes">Yes</Option>
-                                <Option value="no">No</Option>
-                            </Select>
-                            </Form.Item>
-                        </Col>
-
-                        <Col span={12}>
-                            <Form.Item
-                            name="impound_fee"
-                            label="Impound Fee"
-                            rules={[{ required: true, message: 'Please enter amount' }]}
-                            >
-                                <Input placeholder="Please enter impound fee amount" />
+                                <Input placeholder="Please enter State" />
                             </Form.Item>
                         </Col>
                         <Col span={12}>
                             <Form.Item
-                            name="impound_fee_contracted"
-                            label="Impound Fee Contracted?"
-                            rules={[{ required: true, message: 'Please choose the type' }]}
+                                name="county"
+                                label="County"
+                                rules={[{ required: true, message: 'Please enter County' }]}
                             >
-                            <Select placeholder="Please choose the type">
-                                <Option value="yes">Yes</Option>
-                                <Option value="no">No</Option>
-                            </Select>
-                            </Form.Item>
-                        </Col>
-
-                        <Col span={12}>
-                            <Form.Item
-                            name="military_base_fee"
-                            label="Military Fee"
-                            rules={[{ required: true, message: 'Please enter amount' }]}
-                            >
-                                <Input placeholder="Please enter military fee amount" />
+                                <Input placeholder="Please enter County" />
                             </Form.Item>
                         </Col>
                         <Col span={12}>
                             <Form.Item
-                            name="military_base_fee_contracted"
-                            label="Military Fee Contracted?"
-                            rules={[{ required: true, message: 'Please choose the type' }]}
+                                name="miles"
+                                label="Miles"
+                                rules={[{ required: true, message: 'Please enter Miles' }]}
                             >
-                            <Select placeholder="Please choose the type">
-                                <Option value="yes">Yes</Option>
-                                <Option value="no">No</Option>
-                            </Select>
-                            </Form.Item>
-                        </Col>
-
-                        <Col span={12}>
-                            <Form.Item
-                            name="reservation_fee"
-                            label="Reservation Fee"
-                            rules={[{ required: true, message: 'Please enter amount' }]}
-                            >
-                                <Input placeholder="Please enter reservation fee amount" />
+                                <Input placeholder="Please enter Miles" />
                             </Form.Item>
                         </Col>
                         <Col span={12}>
                             <Form.Item
-                            name="reservation_fee_contracted"
-                            label="Reservation Fee Contracted?"
-                            rules={[{ required: true, message: 'Please choose the type' }]}
+                                name="miles_incl"
+                                label="Miles Included"
+                                rules={[{ required: true, message: 'Please enter Miles Included' }]}
                             >
-                            <Select placeholder="Please choose the type">
-                                <Option value="yes">Yes</Option>
-                                <Option value="no">No</Option>
-                            </Select>
+                                <Input placeholder="Please enter Miles Included" />
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                name="rate"
+                                label="Rate"
+                                rules={[{ required: true, message: 'Please enter Rate' }]}
+                            >
+                                <Input placeholder="Please enter Rate" />
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                name="actual"
+                                label="Actual"
+                                rules={[{ required: true, message: 'Please enter Actual' }]}
+                            >
+                                <Input placeholder="Please enter Actual" />
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                name="rounded"
+                                label="Rounded"
+                                rules={[{ required: true, message: 'Please enter Rounded' }]}
+                            >
+                                <Input placeholder="Please enter Rounded" />
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                name="mileage_fee"
+                                label="Mileage fee"
+                                rules={[{ required: true, message: 'Please enter Mileage fee' }]}
+                            >
+                                <Input placeholder="Please enter Mileage fee" />
                             </Form.Item>
                         </Col>
 
-                        <Col span={12}>
-                            <Form.Item
-                            name="oversized_fee"
-                            label="OverSize Fee"
-                            rules={[{ required: true, message: 'Please enter amount' }]}
-                            >
-                                <Input placeholder="Please enter oversize fee amount" />
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Form.Item
-                            name="oversized_fee_contracted"
-                            label="OverSize Fee Contracted?"
-                            rules={[{ required: true, message: 'Please choose the type' }]}
-                            >
-                            <Select placeholder="Please choose the type">
-                                <Option value="yes">Yes</Option>
-                                <Option value="no">No</Option>
-                            </Select>
-                            </Form.Item>
-                        </Col>
 
                         <Col span={12}>
                             <Form.Item
-                            name="two_stop_fee"
-                            label="Two Stop Fee"
-                            rules={[{ required: true, message: 'Please enter amount' }]}
-                            >
-                                <Input placeholder="Please enter two stop fee amount" />
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Form.Item
-                            name="two_stop_fee_contracted"
-                            label="Two Stop Fee Contracted?"
+                            name="reservation"
+                            label="Reservation"
                             rules={[{ required: true, message: 'Please choose the type' }]}
                             >
                             <Select placeholder="Please choose the type">
-                                <Option value="yes">Yes</Option>
-                                <Option value="no">No</Option>
-                            </Select>
-                            </Form.Item>
-                        </Col>
-
-                        <Col span={12}>
-                            <Form.Item
-                            name="reservation_close_fee"
-                            label="Reservation Close Fee"
-                            rules={[{ required: true, message: 'Please enter amount' }]}
-                            >
-                                <Input placeholder="Please enter reservation close fee amount" />
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Form.Item
-                            name="military_base_close_fee"
-                            label="Military Close Fee"
-                            rules={[{ required: true, message: 'Please enter amount' }]}
-                            >
-                                <Input placeholder="Please enter military close fee amount" />
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Form.Item
-                            name="oversized_close_fee"
-                            label="OverSized Close Fee"
-                            rules={[{ required: true, message: 'Please enter amount' }]}
-                            >
-                                <Input placeholder="Please enter oversized close fee amount" />
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Form.Item
-                            name="impound_close_fee"
-                            label="Impound Close Fee"
-                            rules={[{ required: true, message: 'Please enter amount' }]}
-                            >
-                                <Input placeholder="Please enter impound close fee amount" />
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Form.Item
-                            name="involuntary_close_fee"
-                            label="Involuntary Close Fee"
-                            rules={[{ required: true, message: 'Please enter amount' }]}
-                            >
-                                <Input placeholder="Please enter involuntary close fee amount" />
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Form.Item
-                            name="miles_included"
-                            label="Miles Included"
-                            rules={[{ required: true, message: 'Please enter miles included' }]}
-                            >
-                                <Input placeholder="Please enter miles included" />
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Form.Item
-                            name="mileage_rate"
-                            label="Mileage Rate"
-                            rules={[{ required: true, message: 'Please enter mileage rate' }]}
-                            >
-                                <Input placeholder="Please enter mileage rate" />
-                            </Form.Item>
-                        </Col>
-
-                        <Col span={12}>
-                            <Form.Item
-                            name="mileage_contracted"
-                            label="Mileage Contracted?"
-                            rules={[{ required: true, message: 'Please choose the type' }]}
-                            >
-                            <Select placeholder="Please choose the type">
-                                <Option value="yes">Yes</Option>
-                                <Option value="no">No</Option>
+                                <Option value="Yes">Yes</Option>
+                                <Option value="No">No</Option>
                             </Select>
                             </Form.Item>
                         </Col>
                         <Col span={12}>
                             <Form.Item
-                            name="authorization_required"
-                            label="Authorization Required?"
+                            name="military"
+                            label="Military"
                             rules={[{ required: true, message: 'Please choose the type' }]}
                             >
                             <Select placeholder="Please choose the type">
-                                <Option value="yes">Yes</Option>
-                                <Option value="no">No</Option>
+                                <Option value="Yes">Yes</Option>
+                                <Option value="No">No</Option>
                             </Select>
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Form.Item
-                            name="keys_required"
-                            label="Keys Required?"
-                            rules={[{ required: true, message: 'Please choose the type' }]}
-                            >
-                            <Select placeholder="Please choose the type">
-                                <Option value="yes">Yes</Option>
-                                <Option value="no">No</Option>
-                            </Select>
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Form.Item
-                            name="client_forms"
-                            label="Client Forms"
-                            rules={[{ required: true, message: 'Please choose the type' }]}
-                            >
-                            <Select placeholder="Please choose the type">
-                                <Option value="yes">Yes</Option>
-                                <Option value="no">No</Option>
-                            </Select>
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Form.Item
-                            name="lienholder_forms"
-                            label="Lienholder Forms"
-                            rules={[{ required: true, message: 'Please choose the type' }]}
-                            >
-                            <Select placeholder="Please choose the type">
-                                <Option value="yes">Yes</Option>
-                                <Option value="no">No</Option>
-                            </Select>
-                            </Form.Item>
-                        </Col>
-
-                        <Col span={12}>
-                            <Form.Item
-                            name="use_system"
-                            label="System"
-                            rules={[{ required: true, message: 'Please enter system used' }]}
-                            >
-                                <Input placeholder="Please enter system used" />
                             </Form.Item>
                         </Col>
                     </Row>
@@ -425,4 +226,4 @@ const CLientForm = ({ client, onSubmitted }) => {
     );
 }
 
-export default CLientForm;
+export default BranchForm;

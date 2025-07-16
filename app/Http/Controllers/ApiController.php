@@ -50,7 +50,91 @@ class ApiController extends Controller
         ]);
     }
 
-    public function getZipCodes(Request $request)
+    public function createClient(Request $request)
+    {
+        CLientData::create($request->all());
+        return response()->json(['message' => 'Client created successfully']);
+    }
+
+    public function updateClient(Request $request, $id)
+    {
+        $client = CLientData::findOrFail($id);
+        $client->update($request->all());
+        return response()->json(['message' => 'Client updated successfully']);
+    }
+
+    public function deleteClient($id)
+    {
+        CLientData::destroy($id);
+        return response()->json(['message' => 'Client deleted successfully']);
+    }
+
+    public function uploadFileToClient(Request $request)
+    {
+        Log::info('Upload request recieved', ['hasFile' => $request->hasFile('file')]);
+
+        if (!$request->hasFile('file')) {
+            return response()->json(['message' => 'No file uploaded!'], 400);
+        }
+
+        try {
+            $file = $request->file('file');
+            $path = $file->storeAs('uploads', $file->getClientOriginalName());
+            Log::info('File stored', ['path' => $path]);
+            $fullPath = Storage::path($path);
+            Log::info('File full path stored', ['path' => $fullPath]);
+            $data = Excel::toArray(new GenericImport, $fullPath)[0];
+
+            // Clear existing records
+            // CLientData::truncate();
+
+            forEach ($data as $index => $row) {
+                if ($index === 0) continue;
+
+                $existing = CLientData::where('client', $row[0])->where('lienholder', $row[1])->first();
+
+                if (!$existing) {
+                    CLientData::updateOrCreate([
+                        'client' => $row[0] ?? null,
+                        'lienholder' => $row[1] ?? null,
+                        'use_system' => $row[2] ?? null,
+                        'involuntary_fee' => $row[3] ?? null,
+                        'involuntary_fee_contracted' => strtoupper($row[4] ?? 'NO') === 'YES' ? 1 : 0,
+                        'voluntary_fee' => $row[5] ?? null,
+                        'voluntary_fee_contracted' => strtoupper($row[6] ?? 'NO') === 'YES' ? 1 : 0,
+                        'impound_fee' => $row[7] ?? null,
+                        'impound_fee_contracted' => strtoupper($row[8] ?? 'NO') === 'YES' ? 1 : 0,
+                        'military_base_fee' => $row[9] ?? null,
+                        'military_base_fee_contracted' => strtoupper($row[10] ?? 'NO') === 'YES' ? 1 : 0,
+                        'reservation_fee' => $row[11] ?? null,
+                        'reservation_fee_contracted' => strtoupper($row[12] ?? 'NO') === 'YES' ? 1 : 0,
+                        'oversized_fee' => $row[13] ?? null,
+                        'oversized_fee_contracted' => strtoupper($row[14] ?? 'NO') === 'YES' ? 1 : 0,
+                        'two_stop_fee' => $row[15] ?? null,
+                        'two_stop_fee_contracted' => strtoupper($row[16] ?? 'NO') === 'YES' ? 1 : 0,
+                        'reservation_close_fee' => $row[17] ?? null,
+                        'military_base_close_fee' => $row[18] ?? null,
+                        'oversized_close_fee' => $row[19] ?? null,
+                        'impound_close_fee' => $row[20] ?? null,
+                        'involuntary_close_fee' => $row[21] ?? null,
+                        'miles_included' => $row[22] ?? null,
+                        'mileage_rate' => $row[23] ?? null,
+                        'mileage_contracted' => strtoupper($row[24] ?? 'NO') === 'YES' ? 1 : 0,
+                        'authorization_required' => strtoupper($row[25] ?? 'NO') === 'YES' ? 1 : 0,
+                        'keys_required' => strtoupper($row[26] ?? 'NO') === 'YES' ? 1 : 0,
+                        'client_forms' => strtoupper($row[27] ?? 'NO') === 'YES' ? 1 : 0,
+                        'lienholder_forms' => strtoupper($row[28] ?? 'NO') === 'YES' ? 1 : 0,
+                    ]);
+                }
+            }
+            return response()->json(['message' => 'Data imported successfully']);
+        } catch (\Exception $e) {
+            Log::error('Excel read error: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to read Excel file'], 500);
+        }
+    }
+
+    public function getBranch(Request $request)
     {
         $pageSize = (int) $request->query('pageSize', 10);
         $zipcodes = ZipCodeData::paginate($pageSize);
@@ -75,26 +159,41 @@ class ApiController extends Controller
         ]);
     }
 
-    public function createClient(Request $request)
+     public function createBranch(Request $request)
     {
-        CLientData::create($request->all());
+        ZipCodeData::create($request->all());
         return response()->json(['message' => 'Client created successfully']);
+
     }
 
-    public function updateClient(Request $request, $id)
+    private function convertBoolean($value)
     {
-        $client = CLientData::findOrFail($id);
-        $client->update($request->all());
+        if (is_string($value)) {
+            $v = strtolower(trim($value));
+            return ($v === 'yes') ? 1 : (($v === 'no' || str_contains($v, '?') || str_contains($v, 'verify')) ? 0 : (is_numeric($v) ? (float) $v : 0));
+        }
+        return is_numeric($value) ? (float) $value : 0;
+    }
+
+    public function updateBranch(Request $request, $zip_code)
+    {
+        $branch = ZipCodeData::findOrFail($zip_code);
+        $branch->update($request->all());
         return response()->json(['message' => 'Client updated successfully']);
     }
 
-    public function deleteClient($id)
+    public function deleteBranch($zip_code)
     {
-        CLientData::destroy($id);
-        return response()->json(['message' => 'Client deleted successfully']);
+        $deleted = ZipCodeData::where('zip_code', $zip_code)->delete();
+
+        if ($deleted) {
+            return response()->json(['message' => 'Branch deleted successfully']);
+        }else {
+            return response()->json(['message' => 'Branch not found'], 404);
+        }
     }
 
-    public function uploadFile(Request $request)
+    public function uploadFileToBranch(Request $request)
     {
         Log::info('Upload request recieved', ['hasFile' => $request->hasFile('file')]);
 
@@ -116,39 +215,24 @@ class ApiController extends Controller
             forEach ($data as $index => $row) {
                 if ($index === 0) continue;
 
-                $existing = CLientData::where('client', $row[0])->first();
+                $existing = ZipCodeData::where('zip_code', $row[0])->first();
 
                 if (!$existing) {
-                    CLientData::create([
-                        'client' => $row[0] ?? null,
-                        'lienholder' => $row[1] ?? null,
-                        'use_system' => $row[2] ?? null,
-                        'involuntary_fee' => $row[3] ?? null,
-                        'involuntary_fee_contracted' => strtoupper($row[4] ?? 'NO') === 'YES' ? 1 : 0,
-                        'voluntary_fee' => $row[5] ?? null,
-                        'voluntary_fee_contracted' => strtoupper($row[6] ?? 'NO') === 'YES' ? 1 : 0,
-                        'impound_fee' => $row[7] ?? null,
-                        'impound_fee_contracted' => strtoupper($row[8] ?? 'NO') === 'YES' ? 1 : 0,
-                        'military_base_fee' => $row[9] ?? null,
-                        'military_base_fee_contracted' => strtoupper($row[10] ?? 'NO') === 'YES' ? 1 : 0,
-                        'reservation_fee' => $row[11] ?? null,
-                        'reservation_fee_contracted' => strtoupper($row[12] ?? 'NO') === 'YES' ? 1 : 0,
-                        'oversized_fee' => $row[13] ?? null,
-                        'oversized_fee_contracted' => strtoupper($row[14] ?? 'NO') === 'YES' ? 1 : 0,
-                        'two_stop_fee' => $row[15] ?? null,
-                        'two_stop_fee_contracted' => strtoupper($row[16] ?? 'NO') === 'YES' ? 1 : 0,
-                        'reservation_close_fee' => $row[17] ?? null,
-                        'military_close_fee' => $row[18] ?? null,
-                        'oversized_close_fee' => $row[19] ?? null,
-                        'impound_close_fee' => $row[20] ?? null,
-                        'involuntary_close_fee' => $row[21] ?? null,
-                        'miles_included' => $row[22] ?? null,
-                        'mileage_rate' => $row[23] ?? null,
-                        'mileage_contracted' => strtoupper($row[24] ?? 'NO') === 'YES' ? 1 : 0,
-                        'authorization_required' => strtoupper($row[25] ?? 'NO') === 'YES' ? 1 : 0,
-                        'keys_required' => strtoupper($row[26] ?? 'NO') === 'YES' ? 1 : 0,
-                        'client_forms' => strtoupper($row[27] ?? 'NO') === 'YES' ? 1 : 0,
-                        'lienholder_forms' => strtoupper($row[28] ?? 'NO') === 'YES' ? 1 : 0,
+                    ZipCodeData::updateOrCreate([
+                        'zip_code' => $row[0] ?? null,
+                        'branch_name' => $row[1] ?? null,
+                        'branch_zip' => $row[2] ?? null,
+                        'city' => $row[3] ?? null,
+                        'state' => $row[4] ?? null,
+                        'county' => $row[5] ?? null,
+                        'miles' => $row[6] ?? null,
+                        'miles_incl' => $row[7] ?? null,
+                        'rate' => $row[8] ?? null,
+                        'actual' => $row[9] ?? null,
+                        'rounded' => $row[10] ?? null,
+                        'mileage_fee' => $row[11] ?? null,
+                        'reservation' => strtoupper($row[12] ?? 'NO') === 'YES' ? 1 : 0,
+                        'military' => strtoupper($row[13] ?? 'NO') === 'YES' ? 1 : 0,
                     ]);
                 }
             }
@@ -157,50 +241,5 @@ class ApiController extends Controller
             Log::error('Excel read error: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to read Excel file'], 500);
         }
-    }
-
-    public function saveZipCodeData(Request $request)
-    {
-        $data = $request->input('data');
-        if (!$data || count($data) < 2) {
-            return response()->json(['message' => 'Invalid data format'], 400);
-        }
-
-        $columns = $data[0];
-        $rows = array_slice($data, 1);
-        $dbColumns = array_map(function ($header) {
-            return config('mappings.zip_column_mapping')[$header] ?? null;
-        }, $columns);
-
-        if (in_array(null, $dbColumns, true)) {
-            return response()->json(['message' => 'Invalid headers in the file'], 400);
-        }
-
-        $formattedRows = array_map(function ($row) use ($dbColumns) {
-            return array_map(function ($value, $i) use ($dbColumns) {
-                $column = $dbColumns[$i];
-                if (in_array($column, ['reservation', 'military', 'miles'])) {
-                    return $this->convertBoolean($value);
-                }
-                return $value;
-            }, $row, array_keys($row));
-        }, $rows);
-
-        $insertData = array_map(function ($row) use ($dbColumns) {
-            return array_combine($dbColumns, $row);
-        }, $formattedRows);
-
-        ZipCodeData::insertOrIgnore($insertData);
-
-        return response()->json(['message' => 'Data inserted successfully']);
-    }
-
-    private function convertBoolean($value)
-    {
-        if (is_string($value)) {
-            $v = strtolower(trim($value));
-            return ($v === 'yes') ? 1 : (($v === 'no' || str_contains($v, '?') || str_contains($v, 'verify')) ? 0 : (is_numeric($v) ? (float) $v : 0));
-        }
-        return is_numeric($value) ? (float) $value : 0;
     }
 }

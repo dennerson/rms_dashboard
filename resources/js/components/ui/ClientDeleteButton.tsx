@@ -20,7 +20,7 @@ const DeleteButton: React.FC = ({ clientId, onDeleted }) => {
         }catch (error) {
             // message.error('Failed to delete client');
             messageApi.open({
-                type: 'warning',
+                type: 'error',
                 content: 'There are error in deleting client.',
             });
             console.error(error);
@@ -31,7 +31,7 @@ const DeleteButton: React.FC = ({ clientId, onDeleted }) => {
         <>
         {contextHolder}
             <Popconfirm
-                title="Delete the client"
+                title="This action cannot be undo!"
                 description="Are you sure to delete this client?"
                 onConfirm={handleDelete}
                 // onCancel={cancel}

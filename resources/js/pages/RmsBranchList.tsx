@@ -1,10 +1,10 @@
 import AppLayout from '@/layouts/app-layout';
-import BranchForm from '@/pages/BranchListForm';
+import BranchListForm from '@/pages/BranchListForm';
 import BranchTable from '@/components/ui/BranchListTable';
 import React, {useState} from 'react';
 import { Card, Flex, Layout, Upload, Button, message } from 'antd';
 import type { UploadProps, UploadFile } from 'antd';
-import { FileUp } from 'lucide-react';
+import { FileUp, CirclePlus } from 'lucide-react';
 
 
 const { Footer, Content} = Layout;
@@ -40,10 +40,25 @@ const BranchList: React.FC = () => {
     const [messageApi, contextHolder] = message.useMessage();
 
     const [refreshFlag, setRefreshFlag] = useState(false);
-    const [selectedClient, setSelectedClient] = useState(null);
+    const [selectedBranch, setSelectedBranch] = useState(null);
 
-    const handleEdit = (client) => setSelectedClient(client);
-    const clearEdit = () => setSelectedClient(null);
+    const [drawerOpen, setDrawerOpen] = useState(false);
+
+    // const handleEdit = (branch) => setSelectedBranch(branch);
+    const handleBranchEdit = (branch) => {
+        setSelectedBranch(branch);
+        setDrawerOpen(true);
+    };
+    // const clearEdit = () => setSelectedBranch(null);
+    const handleAddbranch = () => {
+        setSelectedBranch(null);
+        setDrawerOpen(true);
+    };
+
+    const handleCloseBranchDrawer = () => {
+        setDrawerOpen(false);
+        setSelectedBranch(null);
+    };
 
     const refreshTable = () => {
         setRefreshFlag(prev => !prev);
@@ -61,7 +76,7 @@ const BranchList: React.FC = () => {
 
         setUploading(true);
 
-        fetch('/api/clients/upload', {
+        fetch('/api/branches/upload', {
         method: 'POST',
         body: formData,
         })
@@ -110,8 +125,8 @@ const BranchList: React.FC = () => {
                                             <div className="flex-1 min-w-[250px]">
                                                 <div className="flex flex-wrap sm:flex-nowrap gap-3">
                                                     <Upload {...uploadProps}>
-                                                        <Button>
-                                                            <FileUp size={16} color="#2c2b2b" />
+                                                        <Button type='default'>
+                                                            <FileUp size={16}/>
                                                             Upload Branch Data
                                                         </Button>
                                                     </Upload>
@@ -121,6 +136,8 @@ const BranchList: React.FC = () => {
                                                         onClick={handleUpload}
                                                         disabled={fileList.length === 0}
                                                         loading={uploading}
+                                                        variant='outlined'
+                                                        color='blue'
                                                     >
                                                         {uploading ? 'Uploading...' : 'Upload'}
                                                     </Button>
@@ -128,11 +145,14 @@ const BranchList: React.FC = () => {
                                             </div>
 
                                             <div className="w-full md:w-auto min-w-[100px]">
-                                                <BranchForm
-                                                    client={selectedClient}
-                                                    onClose={clearEdit}
-                                                    onSubmitted={refreshTable}
-                                                />
+                                                <Button
+                                                    onClick={handleAddbranch}
+                                                    className="ml-2"
+                                                    type='default'
+                                                >
+                                                    <CirclePlus size={15} />
+                                                    Add Branch
+                                                </Button>
                                             </div>
                                         </div>
                                     </Card>
@@ -144,7 +164,7 @@ const BranchList: React.FC = () => {
                                         <Card hoverable>
                                             <BranchTable
                                                 refreshFlag={refreshFlag}
-                                                onEdit={handleEdit}
+                                                onEdit={handleBranchEdit}
 
                                             />
                                         </Card>
@@ -156,6 +176,13 @@ const BranchList: React.FC = () => {
                             </Footer>
                         </Layout>
                     </Flex>
+                    <BranchListForm
+                        branch={selectedBranch}
+                        open={drawerOpen}
+                        setOpen={setDrawerOpen}
+                        onClose={handleCloseBranchDrawer}
+                        onSubmitted={refreshTable}
+                    />
                 </>
             </AppLayout>
         </>

@@ -1,31 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Button, Col, Drawer, Form, Input, Row, Select, Space, message } from 'antd';
-import { CirclePlus } from 'lucide-react';
+// import { CirclePlus } from 'lucide-react';
 
 
 const { Option } = Select;
 
-const CLientForm = ({ client, onSubmitted }) => {
+const CLientForm = ({ client, onSubmitted, onClose, open, setOpen }) => {
     const [form] = Form.useForm();
-    const [open, setOpen] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
 
-    useEffect(() => {
-        if (client) {
-            form.setFieldsValue(client);
-            setOpen(true);
-        }
-    }, [client]);
 
-    const showDrawer = () => {
-        form.resetFields();
-        setOpen(true);
-    };
+    useEffect(() => {
+        if (client && open) {
+            form.setFieldsValue(client);
+        }
+    }, [client, open]);
 
     const handleClose = () => {
         form.resetFields();
         setOpen(false);
-        // onClose();
+        onClose?.();
     };
 
     const normalizedYesNoFields = (data: Record<string, any>) => {
@@ -45,8 +39,8 @@ const CLientForm = ({ client, onSubmitted }) => {
         ];
 
         yesNoFields.forEach(field => {
-            if (data[field] === 'yes') data[field] = 1;
-            else if (data[field] === 'no') data[field] = 0;
+            if (data[field] === 'Yes') data[field] = 1;
+            else if (data[field] === 'No') data[field] = 0;
         });
 
         return data;
@@ -79,15 +73,6 @@ const CLientForm = ({ client, onSubmitted }) => {
     return (
         <>
             {contextHolder}
-            <Button
-                onClick={showDrawer}
-                className='ml-2'
-                color="primary"
-                variant="outlined"
-                >
-                <CirclePlus size={15} color="#0d61e7" />
-                Add Client
-            </Button>
             <Drawer
                 title={client ? 'Edit Client' : 'Add Client'}
                 width={720}
@@ -146,8 +131,8 @@ const CLientForm = ({ client, onSubmitted }) => {
                             rules={[{ required: true, message: 'Please choose the type' }]}
                             >
                             <Select placeholder="Please choose the type">
-                                <Option value="yes">Yes</Option>
-                                <Option value="no">No</Option>
+                                <Option value="Yes">Yes</Option>
+                                <Option value="No">No</Option>
                             </Select>
                             </Form.Item>
                         </Col>
@@ -168,8 +153,8 @@ const CLientForm = ({ client, onSubmitted }) => {
                             rules={[{ required: true, message: 'Please choose the type' }]}
                             >
                             <Select placeholder="Please choose the type">
-                                <Option value="yes">Yes</Option>
-                                <Option value="no">No</Option>
+                                <Option value="Yes">Yes</Option>
+                                <Option value="No">No</Option>
                             </Select>
                             </Form.Item>
                         </Col>
@@ -190,8 +175,8 @@ const CLientForm = ({ client, onSubmitted }) => {
                             rules={[{ required: true, message: 'Please choose the type' }]}
                             >
                             <Select placeholder="Please choose the type">
-                                <Option value="yes">Yes</Option>
-                                <Option value="no">No</Option>
+                                <Option value="Yes">Yes</Option>
+                                <Option value="No">No</Option>
                             </Select>
                             </Form.Item>
                         </Col>
@@ -212,8 +197,8 @@ const CLientForm = ({ client, onSubmitted }) => {
                             rules={[{ required: true, message: 'Please choose the type' }]}
                             >
                             <Select placeholder="Please choose the type">
-                                <Option value="yes">Yes</Option>
-                                <Option value="no">No</Option>
+                                <Option value="Yes">Yes</Option>
+                                <Option value="No">No</Option>
                             </Select>
                             </Form.Item>
                         </Col>
@@ -234,8 +219,8 @@ const CLientForm = ({ client, onSubmitted }) => {
                             rules={[{ required: true, message: 'Please choose the type' }]}
                             >
                             <Select placeholder="Please choose the type">
-                                <Option value="yes">Yes</Option>
-                                <Option value="no">No</Option>
+                                <Option value="Yes">Yes</Option>
+                                <Option value="No">No</Option>
                             </Select>
                             </Form.Item>
                         </Col>
@@ -256,8 +241,8 @@ const CLientForm = ({ client, onSubmitted }) => {
                             rules={[{ required: true, message: 'Please choose the type' }]}
                             >
                             <Select placeholder="Please choose the type">
-                                <Option value="yes">Yes</Option>
-                                <Option value="no">No</Option>
+                                <Option value="Yes">Yes</Option>
+                                <Option value="No">No</Option>
                             </Select>
                             </Form.Item>
                         </Col>
@@ -278,8 +263,8 @@ const CLientForm = ({ client, onSubmitted }) => {
                             rules={[{ required: true, message: 'Please choose the type' }]}
                             >
                             <Select placeholder="Please choose the type">
-                                <Option value="yes">Yes</Option>
-                                <Option value="no">No</Option>
+                                <Option value="Yes">Yes</Option>
+                                <Option value="No">No</Option>
                             </Select>
                             </Form.Item>
                         </Col>
@@ -355,8 +340,8 @@ const CLientForm = ({ client, onSubmitted }) => {
                             rules={[{ required: true, message: 'Please choose the type' }]}
                             >
                             <Select placeholder="Please choose the type">
-                                <Option value="yes">Yes</Option>
-                                <Option value="no">No</Option>
+                                <Option value="Yes">Yes</Option>
+                                <Option value="No">No</Option>
                             </Select>
                             </Form.Item>
                         </Col>
@@ -367,8 +352,8 @@ const CLientForm = ({ client, onSubmitted }) => {
                             rules={[{ required: true, message: 'Please choose the type' }]}
                             >
                             <Select placeholder="Please choose the type">
-                                <Option value="yes">Yes</Option>
-                                <Option value="no">No</Option>
+                                <Option value="Yes">Yes</Option>
+                                <Option value="No">No</Option>
                             </Select>
                             </Form.Item>
                         </Col>
@@ -379,8 +364,8 @@ const CLientForm = ({ client, onSubmitted }) => {
                             rules={[{ required: true, message: 'Please choose the type' }]}
                             >
                             <Select placeholder="Please choose the type">
-                                <Option value="yes">Yes</Option>
-                                <Option value="no">No</Option>
+                                <Option value="Yes">Yes</Option>
+                                <Option value="No">No</Option>
                             </Select>
                             </Form.Item>
                         </Col>
@@ -391,8 +376,8 @@ const CLientForm = ({ client, onSubmitted }) => {
                             rules={[{ required: true, message: 'Please choose the type' }]}
                             >
                             <Select placeholder="Please choose the type">
-                                <Option value="yes">Yes</Option>
-                                <Option value="no">No</Option>
+                                <Option value="Yes">Yes</Option>
+                                <Option value="No">No</Option>
                             </Select>
                             </Form.Item>
                         </Col>
@@ -403,8 +388,8 @@ const CLientForm = ({ client, onSubmitted }) => {
                             rules={[{ required: true, message: 'Please choose the type' }]}
                             >
                             <Select placeholder="Please choose the type">
-                                <Option value="yes">Yes</Option>
-                                <Option value="no">No</Option>
+                                <Option value="Yes">Yes</Option>
+                                <Option value="No">No</Option>
                             </Select>
                             </Form.Item>
                         </Col>

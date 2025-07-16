@@ -14,19 +14,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::get('/rms-web', function () {
-        return Inertia::render('rms_web');
+        return Inertia::render('RmsWeb');
     })->name('RmsWeb');
 
     Route::get('/rms-quote', function () {
-        return Inertia::render('rms_quote');
+        return Inertia::render('RmsQuote');
     })->name('RmsQuote');
 
     Route::get('/rms-client-data', function () {
-        return Inertia::render('rms_client_data');
+        return Inertia::render('RmsClientList');
     })->name('RmsClientData');
 
     Route::get('/rms-branch-list', function () {
-        return Inertia::render('rms_branch_list');
+        return Inertia::render('RmsBranchList');
     })->name('RmsBranchList');
 
     // test display data

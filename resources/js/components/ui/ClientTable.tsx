@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import DeleteButton from '@/components/ui/delete_button';
+import DeleteButton from '@/components/ui/ClientDeleteButton';
 
-import { Table, message } from 'antd';
+import { Button, Flex, Table, message } from 'antd';
 import { FilePenLine } from 'lucide-react';
 import { TablePaginationConfig } from 'antd/es/table/interface';
 
@@ -51,6 +51,7 @@ const ClientTable: React.FC<{ onEdit: (data:Client) => void; refreshFlag: boolea
         try {
             const res = await axios.get(`/api/clients?page=${page}&pageSize=${pageSize}`);
             setClients(res.data.data);
+            console.log('editing: ',res);
             setPagination({
                 current: res.data.currentPage,
                 pageSize: res.data.pageSize,
@@ -111,24 +112,44 @@ const ClientTable: React.FC<{ onEdit: (data:Client) => void; refreshFlag: boolea
             width: 50,
             render: (_:any, record:any) =>
                <>
-                    <div className='flex gap-2'>
+                    {/* <div className='flex gap-2'>
                         <a onClick={() => onEdit(record)}><FilePenLine size={18}/></a>
                         <DeleteButton clientId={record.id} onDeleted={() => fetchClients(pagination.current, pagination.pageSize)}/>
-                    </div>
+                    </div> */}
+
+                    <Flex vertical gap="middle">
+                        <Flex>
+                            <Button
+                            color='blue'
+                            variant='text'
+                            size='small'
+                            >
+                                <a onClick={() => onEdit(record)}><FilePenLine size={18}/></a>
+                            </Button>
+
+                            <Button
+                            color='volcano'
+                            variant='text'
+                            size='small'
+                            >
+                                <DeleteButton clientId={record.id} onDeleted={() => fetchClients(pagination.current, pagination.pageSize)}/>
+                            </Button>
+                        </Flex>
+                    </Flex>
                </>
 
         },
     ];
     return (
-    <Table
-        className='text-center'
-        columns={columns}
-        dataSource={clients}
-        rowKey='id'
-        pagination={pagination}
-        loading={loading}
-        onChange={handleTableChange}
-        scroll={{ x: 'max-content' }}
+        <Table
+            className='text-center'
+            columns={columns}
+            dataSource={clients}
+            rowKey='id'
+            pagination={pagination}
+            loading={loading}
+            onChange={handleTableChange}
+            scroll={{ x: 'max-content' }}
         />
     );
 };

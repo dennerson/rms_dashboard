@@ -1,10 +1,10 @@
 import AppLayout from '@/layouts/app-layout';
-import ClientForm from '@/pages/rms_add_client_data';
-import ClientTable from '@/components/ui/clients_table';
+import ClientForm from '@/pages/RmsClientForm';
+import ClientTable from '@/components/ui/ClientTable';
 import React, {useState} from 'react';
 import { Card, Flex, Layout, Upload, Button, message } from 'antd';
 import type { UploadProps, UploadFile } from 'antd';
-import { FileUp } from 'lucide-react';
+import { FileUp, CirclePlus } from 'lucide-react';
 
 
 const { Footer, Content} = Layout;
@@ -42,8 +42,22 @@ const ClientList: React.FC = () => {
     const [refreshFlag, setRefreshFlag] = useState(false);
     const [selectedClient, setSelectedClient] = useState(null);
 
-    const handleEdit = (client) => setSelectedClient(client);
-    const clearEdit = () => setSelectedClient(null);
+    const [drawerOpen, setDrawerOpen] = useState(false);
+
+    const handleEdit = (client) => {
+        setSelectedClient(client);
+        setDrawerOpen(true);
+    };
+
+    const handleAddClient = () => {
+        setSelectedClient(null);
+        setDrawerOpen(true);
+    };
+
+    const handleCloseDrawer = () => {
+        setDrawerOpen(false);
+        setSelectedClient(null);
+    };
 
     const refreshTable = () => {
         setRefreshFlag(prev => !prev);
@@ -110,8 +124,8 @@ const ClientList: React.FC = () => {
                                             <div className="flex-1 min-w-[250px]">
                                                 <div className="flex flex-wrap sm:flex-nowrap gap-3">
                                                     <Upload {...uploadProps}>
-                                                        <Button>
-                                                            <FileUp size={16} color="#2c2b2b" />
+                                                        <Button type='default'>
+                                                            <FileUp size={16} />
                                                             Upload Client Data
                                                         </Button>
                                                     </Upload>
@@ -121,6 +135,8 @@ const ClientList: React.FC = () => {
                                                         onClick={handleUpload}
                                                         disabled={fileList.length === 0}
                                                         loading={uploading}
+                                                        variant='outlined'
+                                                        color='blue'
                                                     >
                                                         {uploading ? 'Uploading...' : 'Upload'}
                                                     </Button>
@@ -128,11 +144,14 @@ const ClientList: React.FC = () => {
                                             </div>
 
                                             <div className="w-full md:w-auto min-w-[100px]">
-                                                <ClientForm
-                                                    client={selectedClient}
-                                                    onClose={clearEdit}
-                                                    onSubmitted={refreshTable}
-                                                />
+                                                <Button
+                                                    onClick={handleAddClient}
+                                                    className="ml-2"
+                                                    type="default"
+                                                >
+                                                    <CirclePlus size={15} />
+                                                    Add Client
+                                                </Button>
                                             </div>
                                         </div>
                                     </Card>
@@ -156,6 +175,13 @@ const ClientList: React.FC = () => {
                             </Footer>
                         </Layout>
                     </Flex>
+                    <ClientForm
+                        client={selectedClient}
+                        open={drawerOpen}
+                        setOpen={setDrawerOpen}
+                        onClose={handleCloseDrawer}
+                        onSubmitted={refreshTable}
+                    />
                 </>
             </AppLayout>
         </>
