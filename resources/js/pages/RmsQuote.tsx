@@ -2,8 +2,11 @@ import AppLayout from '@/layouts/app-layout';
 import QuoteTable from '@/components/ui/quote_table';
 import Distance from '@/components/ui/distance';
 import { type BreadcrumbItem } from '@/types';
-import React from 'react';
-import { Flex, Layout, Form, Input, Button, Space, Card } from 'antd';
+import React, { useState , } from 'react';
+import { Flex, Layout, Form, Input, Button, Space, Card, Spin } from 'antd';
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import axios from 'axios';
+// import QuoteForm from './QuoteForm';
 
 const { Footer, Content} = Layout;
 
@@ -54,11 +57,29 @@ const validateMessages = {
   },
 };
 
-const onFinish = (values: []) => {
-  console.log(values);
-};
+const Quote: React.FC = () => {
+    const [ combineData, setCombineData ] = useState(null);
+    const [loading, setLoading] = useState(false);
 
-const App: React.FC = () => {
+    const onSubmit = async (values: any) => {
+        const zipCode = values?.zipcode?.value;
+
+        if (!zipCode) return;
+        setLoading(true);
+
+        try {
+            const zoneResponse = await axios.post('http://localhost:8888/check-zone', { zipCode });
+            const matrixResponse = await axios.get(`http://localhost:8000/api/distance?destination=${zipCode}`);
+            const mileageFee = await axios.get('http://localhost:8000/api/mileage-fee')
+
+            setCombineData({...zoneResponse.data, ...matrixResponse.data, ...mileageFee.data});
+
+        } catch (error) {
+            console.error('Error fetching zone error: ', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <>
@@ -75,7 +96,7 @@ const App: React.FC = () => {
                                                 <Form
                                                     {...layout}
                                                     name="nest-messages"
-                                                    onFinish={onFinish}
+                                                    onFinish={onSubmit}
                                                     validateMessages={validateMessages}
                                                     style={{ marginTop: 10 }}
                                                 >
@@ -94,8 +115,10 @@ const App: React.FC = () => {
                                                     </>
 
                                                     <Form.Item label={null} style={{marginBottom:0}}>
-                                                        <Button color="default" variant="outlined" >
-                                                            Submit
+                                                        <Button color="default" variant="outlined" htmlType='submit' disabled={loading} style={{ minWidth: 100 }}>
+                                                            {loading ? (<Spin indicator={<LoadingOutlined spin />} size="small" style={{ marginLeft: 4, marginRight: 4 }} />) : (
+                                                            'Submit'
+                                                            )}
                                                         </Button>
                                                     </Form.Item>
                                                 </Form>
@@ -106,15 +129,15 @@ const App: React.FC = () => {
                                     <>
                                         <div className='mb-3 mt-4'>
                                             <div className="mb-3">
-                                            <Card title="Nearest Distance" size='small' hoverable>
-                                                <Distance />
-                                            </Card>
-                                        </div>
-                                        <div className="">
-                                            <Card title="Quote" size='small' hoverable>
-                                                <QuoteTable />
-                                            </Card>
-                                        </div>
+                                                <Card title="Nearest Distance" size='small' hoverable>
+                                                    <Distance data={combineData} loading={loading} />
+                                                </Card>
+                                            </div>
+                                            <div className="">
+                                                <Card title="Quote" size='small' hoverable>
+                                                    <QuoteTable />
+                                                </Card>
+                                            </div>
                                         </div>
                                     </>
                                 </div>
@@ -133,4 +156,4 @@ const App: React.FC = () => {
 };
 
 
-export default App;
+export default Quote;

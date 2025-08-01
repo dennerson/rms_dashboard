@@ -1,143 +1,81 @@
 import React from 'react';
-import { Flex, Table, Typography, Card } from 'antd';
+import { Flex, Table, Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 import type { TableColumnsType } from 'antd';
-const { Text } = Typography;
 
 interface DataType {
   key: string;
-  location: string;
+  destination_address: string;
   reservation: string;
   military_base: string;
   miles: string;
   branch_address: string;
   mileage_fee: string;
 }
-const columns: TableColumnsType<DataType> = [
-  {
-    title: 'Zip Location',
-    dataIndex: 'location',
-  },
-  {
-    title: 'Reservation',
-    dataIndex: 'reservation',
-  },
-  {
-    title: 'Military Base',
-    dataIndex: 'military_base',
-  },
-  {
-    title: 'Miles',
-    dataIndex: 'miles',
-  },
-  {
-    title: 'Branch Address',
-    dataIndex: 'branch_address',
-  },
-  {
-    title: 'Mileage Fee',
-    dataIndex: 'mileage_fee',
-  },
-  {
-    title: 'Mileage Fee',
-    dataIndex: 'mileage_fee',
-  },
-  {
-    title: 'Mileage Fee',
-    dataIndex: 'mileage_fee',
-  },
-  {
-    title: 'Mileage Fee',
-    dataIndex: 'mileage_fee',
-  },
-  {
-    title: 'Mileage Fee',
-    dataIndex: 'mileage_fee',
-  },
-  {
-    title: 'Mileage Fee',
-    dataIndex: 'mileage_fee',
-  },
-  {
-    title: 'Mileage Fee',
-    dataIndex: 'mileage_fee',
-  },
-  {
-    title: 'Mileage Fee',
-    dataIndex: 'mileage_fee',
-  },
-  {
-    title: 'Mileage Fee',
-    dataIndex: 'mileage_fee',
-  },
-];
 
-const dataSource: DataType[] = [
-  {
-    key: '1',
-    location: 'CLovis,NM 88103,USA',
-    reservation: 'No',
-    military_base: 'Yes',
-    miles: '11.8 mi',
-    branch_address: 'Clovis, NM 88101',
-    mileage_fee: '$0.00',
-  },
-];
+interface DistanceProps {
+    data: {
+        destination_address:string;
 
-// const fixedColumns: TableColumnsType<FixedDataType> = [
-//   {
-//     title: 'Name',
-//     dataIndex: 'name',
-//     fixed: true,
-//     width: 100,
-//   },
-//   {
-//     title: 'Description',
-//     dataIndex: 'description',
-//   },
-// ];
+        isTribal: boolean;
+        isMilitary: boolean;
+        zip?: string;
+        miles: string;
+        branch_address: string;
+        mileage_fee: string;
+    } | null;
+    loading: boolean;
+}
+const Distance: React.FC<DistanceProps> = ({ data, loading }) => {
+    const columns: TableColumnsType<DataType> = [
+    {
+        title: 'Location',
+        dataIndex: 'location',
+    },
+    {
+        title: 'Reservation',
+        dataIndex: 'reservation',
+    },
+    {
+        title: 'Military Base',
+        dataIndex: 'military_base',
+    },
+    {
+        title: 'Miles',
+        dataIndex: 'miles',
+    },
+    {
+        title: 'Branch Address',
+        dataIndex: 'branch_address',
+    },
+    {
+        title: 'Mileage Fee',
+        dataIndex: 'mileage_fee',
+    },
+    ];
 
-// const fixedDataSource = Array.from({ length: 20 }).map<FixedDataType>((_, i) => ({
-//   key: i,
-//   name: ['Light', 'Bamboo', 'Little'][i % 3],
-//   description: 'Everything that has a beginning, has an end.',
-// }));
-
-const App: React.FC = () => {
-//   const { styles } = useStyle();
-  return (
+    const dataSource: DataType[] = data ? [{
+        key: '1',
+        location: data.nearest.destination_address ,
+        reservation: data.isTribal ? 'Yes' : 'No',
+        military_base: data.isMilitary ? 'Yes' : 'No',
+        miles: data.nearest.distance ,
+        branch_address: data.nearest.origin_address ,
+        mileage_fee: data.data.mileageFee ? `$${parseFloat(data.data.mileageFee).toFixed(2)}` : '0' ,//need to create the fee controller first then pass the data here
+    }] : [];
+    return (
     <Flex vertical gap="small">
-      <Table<DataType>
-        bordered
-        // className={styles.customTable}
-        columns={columns}
-        dataSource={dataSource}
-        pagination={false}
-        scroll={{ x: 'max-content' }}
-        summary={(pageData) => {
-          let totalBorrow = 0;
-          let totalRepayment = 0;
-        //   pageData.forEach(({ if_repo, if_close }) => {
-        //     totalBorrow += if_repo;
-        //     totalRepayment += if_close;
-        //   });
-
-          return (
-            <>
-              <Table.Summary.Row>
-                {/* <Table.Summary.Cell index={0}>Total Invoice Amount</Table.Summary.Cell> */}
-                {/* <Table.Summary.Cell index={1} colSpan={2}>
-                  <Text type="danger">${totalBorrow - totalRepayment}</Text>
-                </Table.Summary.Cell>
-                <Table.Summary.Cell index={2} colSpan={2}>
-                  <Text type="danger">${totalBorrow - totalRepayment}</Text>
-                </Table.Summary.Cell> */}
-              </Table.Summary.Row>
-            </>
-          );
-        }}
-      />
+        {loading ? (<Spin indicator={<LoadingOutlined spin />} size="large" />) : (
+        <Table<DataType>
+            bordered
+            columns={columns}
+            dataSource={dataSource}
+            pagination={false}
+            scroll={{ x: 'max-content' }}
+            />
+        )}
     </Flex>
-  );
+    );
 };
 
-export default App;
+export default Distance;

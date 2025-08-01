@@ -203,9 +203,11 @@ class ApiController extends Controller
 
         try {
             $file = $request->file('file');
+            // dd($file);
             $path = $file->storeAs('uploads', $file->getClientOriginalName());
             Log::info('File stored', ['path' => $path]);
             $fullPath = Storage::path($path);
+            dd($fullPath);
             Log::info('File full path stored', ['path' => $fullPath]);
             $data = Excel::toArray(new GenericImport, $fullPath)[0];
 
