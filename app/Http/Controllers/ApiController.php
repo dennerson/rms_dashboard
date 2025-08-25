@@ -14,8 +14,8 @@ class ApiController extends Controller
 {
     public function getClients(Request $request)
     {
-        $pageSize = (int) $request->query('pageSize', 10);
-        $clients = CLientData::paginate($pageSize);
+        $pageSize = (int) $request->query('pageSize');
+        $query = ClientData::query();
 
         $booleanFields = [
             "involuntary_fee_contracted",
@@ -31,23 +31,34 @@ class ApiController extends Controller
             "client_forms",
             "lienholder_forms",
         ];
-
-        $clients->getCollection()->transform(function ($client) use ($booleanFields) {
+        // transform
+        $transform = function ($client) use ($booleanFields) {
             foreach ($booleanFields as $field) {
                 if (isset($client->$field)) {
                     $client->$field = $client->$field ? 'Yes' : 'No';
                 }
             }
             return $client;
-        });
+        };
 
-        return response()->json([
-            'data' => $clients->items(),
-            'currentPage' => $clients->currentPage(),
-            'totalPages' => $clients->lastPage(),
-            'pageSize' => $clients->perPage(),
-            'totalRecords' => $clients->total(),
-        ]);
+        if ($pageSize) {
+            $clients = $query->paginate((int) $pageSize);
+            $clients->getCollection()->transform($transform);
+
+            return response()->json([
+                'data' => $clients->items(),
+                'currentPage' => $clients->currentPage(),
+                'totalPages' => $clients->lastPage(),
+                'pageSize' => $clients->perPage(),
+                'totalRecords' => $clients->total(),
+            ]);
+        } else {
+            $clients = $query->get()->map($transform);
+
+            return response()->json([
+                'data' => $clients,
+            ]);
+        }
     }
 
     public function createClient(Request $request)
@@ -85,9 +96,6 @@ class ApiController extends Controller
             Log::info('File full path stored', ['path' => $fullPath]);
             $data = Excel::toArray(new GenericImport, $fullPath)[0];
 
-            // Clear existing records
-            // CLientData::truncate();
-
             forEach ($data as $index => $row) {
                 if ($index === 0) continue;
 
@@ -104,10 +112,13 @@ class ApiController extends Controller
                         'voluntary_fee_contracted' => strtoupper($row[6] ?? 'NO') === 'YES' ? 1 : 0,
                         'impound_fee' => $row[7] ?? null,
                         'impound_fee_contracted' => strtoupper($row[8] ?? 'NO') === 'YES' ? 1 : 0,
-                        'military_base_fee' => $row[9] ?? null,
-                        'military_base_fee_contracted' => strtoupper($row[10] ?? 'NO') === 'YES' ? 1 : 0,
-                        'reservation_fee' => $row[11] ?? null,
-                        'reservation_fee_contracted' => strtoupper($row[12] ?? 'NO') === 'YES' ? 1 : 0,
+
+                        'reservation_fee' => $row[9] ?? null,
+                        'reservation_fee_contracted' => strtoupper($row[10] ?? 'NO') === 'YES' ? 1 : 0,
+
+                        'military_base_fee' => $row[11] ?? null,
+                        'military_base_fee_contracted' => strtoupper($row[12] ?? 'NO') === 'YES' ? 1 : 0,
+
                         'oversized_fee' => $row[13] ?? null,
                         'oversized_fee_contracted' => strtoupper($row[14] ?? 'NO') === 'YES' ? 1 : 0,
                         'two_stop_fee' => $row[15] ?? null,
@@ -203,16 +214,11 @@ class ApiController extends Controller
 
         try {
             $file = $request->file('file');
-            // dd($file);
             $path = $file->storeAs('uploads', $file->getClientOriginalName());
             Log::info('File stored', ['path' => $path]);
             $fullPath = Storage::path($path);
-            dd($fullPath);
             Log::info('File full path stored', ['path' => $fullPath]);
             $data = Excel::toArray(new GenericImport, $fullPath)[0];
-
-            // Clear existing records
-            // CLientData::truncate();
 
             forEach ($data as $index => $row) {
                 if ($index === 0) continue;

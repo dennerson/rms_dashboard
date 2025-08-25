@@ -5,6 +5,26 @@ import DeleteButton from '@/components/ui/ClientDeleteButton';
 import { Button, Flex, Table, message } from 'antd';
 import { FilePenLine } from 'lucide-react';
 import { TablePaginationConfig } from 'antd/es/table/interface';
+import {
+    UserOutlined,
+    BankOutlined,
+    LaptopOutlined,
+    DollarOutlined,
+    WalletOutlined,
+    CarOutlined,
+    PushpinOutlined,
+    SafetyCertificateOutlined,
+    AppstoreOutlined,
+    PauseOutlined,
+    LockOutlined,
+    DashboardOutlined,
+    LineChartOutlined,
+    CheckCircleOutlined,
+    KeyOutlined,
+    FileDoneOutlined,
+    FileTextOutlined,
+    FileProtectOutlined,
+} from "@ant-design/icons";
 
 
 interface Client {
@@ -18,10 +38,10 @@ interface Client {
     voluntary_fee_contracted: string;
     impound_fee: string;
     impound_fee_contracted: string;
-    military_base_fee: string;
-    military_base_fee_contracted: string;
     reservation_fee: string;
     reservation_fee_contracted: string;
+    military_base_fee: string;
+    military_base_fee_contracted: string;
     oversized_fee: string;
     oversized_fee_contracted: string;
     two_stop_fee: string;
@@ -38,7 +58,6 @@ interface Client {
     keys_required: string;
     client_forms: string;
     lienholder_forms: string;
-
 }
 
 const ClientTable: React.FC<{ onEdit: (data:Client) => void; refreshFlag: boolean;}> = ({ onEdit, refreshFlag }) => {
@@ -76,35 +95,298 @@ const ClientTable: React.FC<{ onEdit: (data:Client) => void; refreshFlag: boolea
     };
 
     const columns = [
-        {title: 'Client Name', dataIndex: 'client', fixed: 'left'},
-        {title: 'Lienholder Name', dataIndex: 'lienholder', sorter: true},
-        {title: 'System', dataIndex: 'use_system'},
-        {title: 'Involuntary Fee', dataIndex: 'involuntary_fee'},
-        {title: 'Involuntary Fee Contracted?', dataIndex: 'involuntary_fee_contracted'},
-        {title: 'Voluntary Fee', dataIndex: 'voluntary_fee'},
-        {title: 'Voluntary Fee Contracted?', dataIndex: 'voluntary_fee_contracted'},
-        {title: 'Impound Fee', dataIndex: 'impound_fee'},
-        {title: 'Impound Fee Contracted?', dataIndex: 'impound_fee_contracted'},
-        {title: 'Military Fee', dataIndex: 'military_base_fee'},
-        {title: 'Military Fee Contracted?', dataIndex: 'military_base_fee_contracted'},
-        {title: 'Reservation Fee', dataIndex: 'reservation_fee'},
-        {title: 'Reservation Fee Contracted?', dataIndex: 'reservation_fee_contracted'},
-        {title: 'Over Size', dataIndex: 'oversized_fee'},
-        {title: 'Over Size Contracted?', dataIndex: 'oversized_fee_contracted'},
-        {title: 'Two Stop Fee', dataIndex: 'two_stop_fee'},
-        {title: 'Two Stop Fee Contracted?', dataIndex: 'two_stop_fee_contracted'},
-        {title: 'Reservation Close Fee', dataIndex: 'reservation_close_fee'},
-        {title: 'Military Close Fee', dataIndex: 'military_base_close_fee'},
-        {title: 'OverSized Close Fee', dataIndex: 'oversized_close_fee'},
-        {title: 'Impound Close Fee', dataIndex: 'impound_close_fee'},
-        {title: 'Involuntary Close Fee', dataIndex: 'involuntary_close_fee'},
-        {title: 'Miles Included', dataIndex: 'miles_included'},
-        {title: 'Mileage Rate', dataIndex: 'mileage_rate'},
-        {title: 'Mileage Contracted?', dataIndex: 'mileage_contracted'},
-        {title: 'Authorization Required?', dataIndex: 'authorization_required'},
-        {title: 'Keys Required?', dataIndex: 'keys_required'},
-        {title: 'Client Forms', dataIndex: 'client_forms'},
-        {title: 'Lienholder Forms', dataIndex: 'lienholder_forms'},
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><UserOutlined /></span>
+                    <span>Client Name</span>
+                </span>
+            ),
+            dataIndex: 'client',
+            fixed: 'left',
+            sorter: true,
+            width: 180,
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><BankOutlined /></span>
+                    <span>Lienholder</span>
+                </span>
+            ),
+            dataIndex: 'lienholder',
+            sorter: true,
+            width: 180,
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><LaptopOutlined /></span>
+                    <span>System</span>
+                </span>
+            ), dataIndex: 'use_system'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><DollarOutlined /></span>
+                    <span>Involuntary Fee</span>
+                </span>
+            ),
+            dataIndex: 'involuntary_fee'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><FileDoneOutlined /></span>
+                    <span>Involuntary Fee Contracted?</span>
+                </span>
+            ),
+            dataIndex: 'involuntary_fee_contracted'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><WalletOutlined /></span>
+                    <span>Voluntary Fee</span>
+                </span>
+            ),
+            dataIndex: 'voluntary_fee'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><FileDoneOutlined /></span>
+                    <span>Voluntary Fee Contracted?</span>
+                </span>
+            ),
+            dataIndex: 'voluntary_fee_contracted'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><CarOutlined /></span>
+                    <span>Impound Fee</span>
+                </span>
+            ),
+            dataIndex: 'impound_fee'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><FileDoneOutlined /></span>
+                    <span>Impound Fee Contracted?</span>
+                </span>
+            ),
+            dataIndex: 'impound_fee_contracted'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><PushpinOutlined /></span>
+                    <span>Reservation Fee</span>
+                </span>
+            ),
+            dataIndex: 'reservation_fee'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><FileDoneOutlined /></span>
+                    <span>Reservation Fee Contracted?</span>
+                </span>
+            ),
+            dataIndex: 'reservation_fee_contracted'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><SafetyCertificateOutlined /></span>
+                    <span>Military Fee</span>
+                </span>
+            ),
+            dataIndex: 'military_base_fee'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><FileDoneOutlined /></span>
+                    <span>Military Fee Contracted?</span>
+                </span>
+            ),
+            dataIndex: 'military_base_fee_contracted'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><AppstoreOutlined /></span>
+                    <span>Over Size Fee</span>
+                </span>
+            ),
+            dataIndex: 'oversized_fee'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><FileDoneOutlined /></span>
+                    <span>Over Size Contracted?</span>
+                </span>
+            ),
+            dataIndex: 'oversized_fee_contracted'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><PauseOutlined /></span>
+                    <span>Two Stop Fee</span>
+                </span>
+            ),
+            dataIndex: 'two_stop_fee'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><FileDoneOutlined /></span>
+                    <span>Two Stop Fee Contracted?</span>
+                </span>
+            ),
+            dataIndex: 'two_stop_fee_contracted'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><LockOutlined /></span>
+                    <span>Reservation Close Fee</span>
+                </span>
+            ),
+            dataIndex: 'reservation_close_fee'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><SafetyCertificateOutlined /></span>
+                    <span>Military Close Fee</span>
+                </span>
+            ),
+            dataIndex: 'military_base_close_fee'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><AppstoreOutlined /></span>
+                    <span> Oversized Close Fee</span>
+                </span>
+            ),
+            dataIndex: 'oversized_close_fee'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><CarOutlined /></span>
+                    <span>Impound Close Fee</span>
+                </span>
+            ),
+            dataIndex: 'impound_close_fee'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><DollarOutlined /></span>
+                    <span>Involuntary Close Fee</span>
+                </span>
+            ),
+            dataIndex: 'involuntary_close_fee'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><DashboardOutlined /></span>
+                    <span>Miles Included</span>
+                </span>
+            ),
+            dataIndex: 'miles_included'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><LineChartOutlined /></span>
+                    <span>Mileage Rate</span>
+                </span>
+            ),
+            dataIndex: 'mileage_rate'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><FileDoneOutlined /></span>
+                    <span>Mileage Contracted?</span>
+                </span>
+            ),
+            dataIndex: 'mileage_contracted'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><CheckCircleOutlined /></span>
+                    <span>Authorization Required?</span>
+                </span>
+            ),
+            dataIndex: 'authorization_required'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><KeyOutlined /></span>
+                    <span>Keys Required?</span>
+                </span>
+            ),
+            dataIndex: 'keys_required'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><FileTextOutlined /></span>
+                    <span>Client Forms</span>
+                </span>
+            ),
+            dataIndex: 'client_forms'
+
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><FileProtectOutlined /></span>
+                    <span>Lienholder Forms</span>
+                </span>
+            ),
+            dataIndex: 'lienholder_forms'
+
+        },
         {
             title: 'Actions',
             key: 'actions',

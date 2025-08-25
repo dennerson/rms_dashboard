@@ -1,13 +1,15 @@
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
+// import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
-import AdminTesting from '@/components/admin/testing'
+import Report from '@/components/ui/ReportTable';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+// import { Head } from '@inertiajs/react';
+import { CarOutlined } from '@ant-design/icons';
 
-import { Card, Layout} from 'antd';
+import { Card, Col, Row, Flex, Layout, Space} from 'antd';
 import LineChart from '@/components/charts/LineChart';
 import BarChart from '@/components/charts/BarChart';
-import PieChart from '@/components/charts/PieChart';
+import ColumnChart from '@/components/charts/ColumnChart';
+// import { Space } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -23,7 +25,7 @@ const layoutStyle = {
   overflow: 'hidden',
   width: 'calc(100% - 8px)',
   maxWidth: 'calc(100% - 8px)',
-  backgroundColor: 'oklch(0.205 0 0)',
+  backgroundColor: '#DBE2E9',
 };
 
 const contentStyle: React.CSSProperties = {
@@ -31,8 +33,8 @@ const contentStyle: React.CSSProperties = {
   minHeight: 120,
   lineHeight: 120,
   color: '#F2F3F4',
-  backgroundColor: '#DBE2E9',
-  borderRadius: 8,
+//   backgroundColor: '#DBE2E9',
+//   borderRadius: 8,
 };
 
 const footerStyle: React.CSSProperties = {
@@ -45,31 +47,123 @@ const footerStyle: React.CSSProperties = {
 export default function Dashboard() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Dashboard" />
+            <Flex gap="middle" wrap className="relative min-h-[100vh] flex-1 overflow-hidden">
+                {/* <Head title="Dashboard" /> */}
                 <Layout style={layoutStyle}>
                     <Content style={contentStyle}>
                         <>
-                            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 overflow-x-auto">
+                            <div className="flex flex-col gap-4 rounded-xl p-4 overflow-x-auto">
                                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                                    <div className="relative aspect-3/2 overflow-hidden rounded-xl ">
-                                        <Card title="Appointments" className="w-full max-w-5xl mx-auto p-4" size='small' hoverable>
+                                    <div className="rounded-xl ">
+                                        <Card title="Appointments" size='small' hoverable>
                                             <LineChart />
                                         </Card>
                                     </div>
-                                    <div className="relative aspect-3/2 overflow-hidden rounded-xl ">
-                                        <Card title="Success Appointments" className="w-full max-w-5xl mx-auto p-4" size='small' hoverable>
-                                            <BarChart />
+                                    <div className="rounded-xl ">
+                                        <Card title="Success Appointments" size='small' hoverable>
+                                            <LineChart />
                                         </Card>
                                     </div>
-                                    <div className="relative aspect-3/2 overflow-hidden rounded-xl ">
+                                    <div className="rounded-xl ">
                                         <Card title="Cancelled Appointments" size='small' hoverable>
-                                            <PieChart />
+                                            <ColumnChart />
                                         </Card>
 
                                     </div>
                                 </div>
-                                <div className="relative flex-1 overflow-hidden rounded-xl ">
-                                    <Card><AdminTesting /></Card>
+
+                                {/* <div className='flex flex-wrap'>
+                                    <div className='flex-1'>
+                                        <Card>
+                                            <div className='flex'>
+                                                <div className='flex'>
+                                                    <Col span={80} pull={0}>
+                                                        <Card title="Success Appointments"  hoverable>
+                                                                <BarChart />
+                                                        </Card>
+                                                    </Col>
+                                                </div>
+                                                <div className='flex'>
+                                                    <Col span={90} push={10}>
+                                                        <Card>Hello</Card>
+                                                    </Col>
+                                                </div>
+                                            </div>
+                                        </Card>
+                                    </div>
+                                </div> */}
+                                <div className=''>
+                                    <div className=''>
+                                        <Card hoverable>
+                                            <Row gutter={16}>
+                                                {/* Left side */}
+                                                <Col flex="auto">
+                                                    <Row gutter={16}>
+                                                        <Col span={12}>
+                                                            <Card size="small" hoverable>
+                                                                <CarOutlined />
+                                                                <p>Searches</p>
+                                                                <p>
+                                                                <strong>400%</strong>
+                                                                </p>
+                                                            </Card>
+                                                        </Col>
+
+                                                        <Col span={12}>
+                                                            <Card size="small" hoverable>
+                                                                <CarOutlined />
+                                                                <p>Searches</p>
+                                                                <p>
+                                                                <strong>400%</strong>
+                                                                </p>
+                                                            </Card>
+                                                        </Col>
+                                                    </Row>
+
+                                                    <Card size="default" hoverable style={{ marginTop: 16 }}>
+                                                        <BarChart />
+                                                    </Card>
+                                                </Col>
+
+                                                {/* Right side */}
+                                                <Col flex="120px">
+                                                    <Space direction="vertical" style={{ width: "100%" }}>
+                                                        <Card size="small" hoverable style={{ textAlign: "center", height: 120 }}>
+                                                            {/* <CarOutlined /> */}
+                                                            {/* <p>Searches</p>
+                                                            <p>
+                                                                <strong>400%</strong>
+                                                            </p> */}
+                                                            <p className='text-xs'>coming soon...</p>
+                                                        </Card>
+                                                        <Card size="small" hoverable style={{ textAlign: "center", height: 120 }}>
+                                                            {/* <CarOutlined /> */}
+                                                            {/* <p>Searches</p>
+                                                            <p>
+                                                                <strong>400%</strong>
+                                                            </p> */}
+                                                            <p className='text-xs'>coming soon...</p>
+                                                        </Card>
+                                                        <Card size="small" hoverable style={{ textAlign: "center", height: 120 }}>
+                                                            {/* <CarOutlined />
+                                                            <p>Searches</p>
+                                                            <p>
+                                                                <strong>400%</strong>
+                                                            </p> */}
+                                                            <p className='text-xs'>coming soon...</p>
+                                                        </Card>
+                                                    </Space>
+                                                </Col>
+                                            </Row>
+                                        </Card>
+                                    </div>
+                                </div>
+
+                                <div className="relative flex-1 rounded-xl ">
+                                    <Card title="" hoverable>
+                                        <h1 className='flex text-wrap font-bold mb-3 text-xl'>Search History </h1>
+                                        <Report />
+                                    </Card>
                                 </div>
                             </div>
                         </>
@@ -79,6 +173,7 @@ export default function Dashboard() {
                         <p>Copyright © 2025 Recovery Management Solutions</p>
                     </Footer>
                 </Layout>
+            </Flex>
         </AppLayout>
     );
 }

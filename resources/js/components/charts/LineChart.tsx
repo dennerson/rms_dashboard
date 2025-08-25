@@ -23,13 +23,13 @@ const config = {
         shape: 'diamond',
     },
     color: '#1890ff',
-    height: 120,
+    height: 200,
     autoFit: true,
     smooth: true,
 };
 
 const LineChart = () => (
-    <div className="h-[50vh] w-full">
+    <div className="">
         <Line {...config} />
     </div>
 );

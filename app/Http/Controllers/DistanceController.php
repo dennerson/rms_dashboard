@@ -15,7 +15,7 @@ class DistanceController extends Controller
         if (!$destination) {
             return response()->json(['error' => 'Destination is required'], 400);
         }
-
+        // add zipcode if there are any new branch location
         $origins = implode('|', [
             '87107', '88101', '80216', '87401', '87301', '86025',
             '88001', '55104', '59101', '85022', '88203', '85714', '98001'
@@ -35,7 +35,7 @@ class DistanceController extends Controller
             $results = collect($data['rows'])->map(function ($row, $index) use ($data) {
                 $distanceText = $row['elements'][0]['distance']['text'] ?? 'N/A';
                 $durationText = $row['elements'][0]['duration']['text'] ?? 'N/A';
-                $numericDistance = floatval(preg_replace('/[^0-9]/', '', $distanceText));
+                $numericDistance = floatval(str_replace(',', '',preg_replace('/[^0-9.]/', '', $distanceText)));
 
                 return [
                     'origin_address' => $data['origin_addresses'][$index],

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bar } from '@ant-design/charts';
+import { Funnel, Line } from '@ant-design/charts';
 
 const data = [
     { month: 'Jan', value: 100 },
@@ -19,18 +19,18 @@ const config = {
     xField: 'month',
     yField: 'value',
     point: {
-        size: 5,
+        size: 1,
         shape: 'diamond',
     },
     color: '#1890ff',
-    height: 120,
+    height: 220,
     autoFit: true,
     smooth: true,
 };
 
 const BarChart = () => (
-    <div className="h-[50vh] w-full">
-        <Bar {...config} />
+    <div className="">
+        <Line {...config} />
     </div>
 );
 

@@ -3,6 +3,21 @@ import axios from 'axios';
 import DeleteButton from '@/components/ui/BranchDeleteButton';
 
 import { Table, message, Button, Flex } from 'antd';
+import {
+    TagOutlined,
+  ShopOutlined,
+  HomeOutlined,
+  FlagOutlined,
+  ClusterOutlined,
+  DashboardOutlined,
+  PlusCircleOutlined,
+  LineChartOutlined,
+  CheckCircleOutlined,
+  ReloadOutlined,
+  DollarOutlined,
+  PushpinOutlined,
+  SafetyCertificateOutlined,
+} from "@ant-design/icons";
 import { FilePenLine } from 'lucide-react';
 import { TablePaginationConfig } from 'antd/es/table/interface';
 
@@ -61,20 +76,134 @@ const BranchTable: React.FC<{ onEdit: (data:Branch) => void; refreshFlag: boolea
     };
 
     const columns = [
-        {title: 'Zipcodes', dataIndex: 'zip_code', fixed: 'left'},
-        {title: 'Branch', dataIndex: 'branch_name', sorter: true},
-        {title: 'Branch Zip', dataIndex: 'branch_zip'},
-        {title: 'City', dataIndex: 'city'},
-        {title: 'State', dataIndex: 'state'},
-        {title: 'County', dataIndex: 'county'},
-        {title: 'Miles', dataIndex: 'miles'},
-        {title: 'Miles Incl', dataIndex: 'miles_incl'},
-        {title: 'Rate', dataIndex: 'rate'},
-        {title: 'Actual', dataIndex: 'actual'},
-        {title: 'Rounded', dataIndex: 'rounded'},
-        {title: 'Mileage Fee', dataIndex: 'mileage_fee'},
-        {title: 'Reservation', dataIndex: 'reservation'},
-        {title: 'Military', dataIndex: 'military'},
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><TagOutlined /></span>
+                    <span>Zipcodes</span>
+                </span>
+            ),
+            dataIndex: 'zip_code',
+            fixed: 'left'
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><ShopOutlined /></span>
+                    <span>Branch</span>
+                </span>
+            ),
+            dataIndex: 'branch_name',
+            sorter: true
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><TagOutlined /></span>
+                    <span>Branch Zip</span>
+                </span>
+            ),
+            dataIndex: 'branch_zip'
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><HomeOutlined /></span>
+                    <span>City</span>
+                </span>
+            ),
+            dataIndex: 'city'
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><FlagOutlined /></span>
+                    <span>State</span>
+                </span>
+            ),
+            dataIndex: 'state'
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><ClusterOutlined /></span>
+                    <span>County</span>
+                </span>
+            ),
+            dataIndex: 'county'
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><DashboardOutlined /></span>
+                    <span>Miles</span>
+                </span>
+            ),
+            dataIndex: 'miles'
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><PlusCircleOutlined /></span>
+                    <span>Miles Incl</span>
+                </span>
+            ),
+            dataIndex: 'miles_incl'
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><LineChartOutlined /></span>
+                    <span>Rate</span>
+                </span>
+            ),
+            dataIndex: 'rate'
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><CheckCircleOutlined /></span>
+                    <span>Actual</span>
+                </span>
+            ),
+            dataIndex: 'actual'
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><ReloadOutlined /></span>
+                    <span>Rounded</span>
+                </span>
+            ),
+            dataIndex: 'rounded'
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><DollarOutlined /></span>
+                    <span>Mileage Fee</span>
+                </span>
+            ),
+            dataIndex: 'mileage_fee'
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'>< PushpinOutlined /></span>
+                    <span>Reservation</span>
+                </span>
+            ),
+            dataIndex: 'reservation'
+        },
+        {
+            title: (
+                <span className='flex items-center gap-2'>
+                    <span className='text-green-500'><SafetyCertificateOutlined /></span>
+                    <span>Military</span>
+                </span>
+            ),
+            dataIndex: 'military'
+        },
         {
             title: 'Actions',
             key: 'actions',
