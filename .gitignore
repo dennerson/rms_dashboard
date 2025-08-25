@@ -22,3 +22,7 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# Ignore large files
+geo_checker/geojson/zipcodes/zipcodes.geojson
+geo_checker/geojson/zipcodes/tl_2024_us_zcta520.shp
