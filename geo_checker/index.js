@@ -1,6 +1,8 @@
+import dotenv from 'dotenv';
+
 import * as turf from '@turf/turf';
 import cors from 'cors';
-import dotenv from 'dotenv';
+
 import express from 'express';
 import mysql from 'mysql2/promise';
 import shapefile from 'shapefile';
@@ -13,11 +15,14 @@ dotenv.config();
 // MySQL Connection
 const db = mysql.createPool({
     host: process.env.DB_HOST,
-    user: process.env.DB_USER,
+    user: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
+    database: process.env.DB_DATABASE,
     port: process.env.DB_PORT,
 });
+console.log('DB_USER:', process.env.DB_USERNAME);
+console.log('DB_PASS:', process.env.DB_PASSWORD ? '******' : 'NOT SET');
+console.log('user:', db.user);
 
 db.getConnection()
     .then((connection) => {
