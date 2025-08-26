@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Table, Button, Space } from 'antd';
-import type { TableColumnsType } from 'antd';
+// import type { TableColumnsType } from 'antd';
 import { ExportOutlined,
     AuditOutlined,
     UsergroupAddOutlined,
@@ -13,9 +13,9 @@ import { ExportOutlined,
     KeyOutlined,
     AppstoreOutlined,
     GlobalOutlined, } from '@ant-design/icons';
-import { Trash2, FilePenLine } from 'lucide-react';
+// import { Trash2, FilePenLine } from 'lucide-react';
 
-import Staff from '@/components/ui/ReportStaffTable'
+// import Staff from '@/components/ui/ReportStaffTable'
 
 interface DataType {
   key: React.Key;
@@ -187,29 +187,29 @@ const ReportTable: React.FC = () => {
         //   },
     ];
 
-  return (
-    <>
-        <div className='mb-4'>
-            <div className='flex flex-wrap md:flex-nowrap gap-4 mb-4'>
-                <div className='flex-1 min-w-[200px]'>
-                    <h3 className='flex'><i><AuditOutlined /></i>Search Details </h3>
+    return (
+        <>
+            <div className='mb-4'>
+                <div className='flex flex-wrap md:flex-nowrap gap-4 mb-4'>
+                    <div className='flex-1 min-w-[200px]'>
+                        <h3 className='flex'><i><AuditOutlined /></i>Search Details </h3>
+                    </div>
+                    <Button className=''><i><ExportOutlined /></i>export Excel</Button>
                 </div>
-                <Button className=''><i><ExportOutlined /></i>export Excel</Button>
+                <Card title=''  size='small' hoverable>
+                    <Table<DataType>
+                        columns={columns}
+                        dataSource={dataSource}
+                        scroll={{ x: 'max-content', y: 50 * 5 }}
+                        pagination={false}
+                    />
+                </Card>
             </div>
-            <Card title=''  size='small' hoverable>
-                <Table<DataType>
-                    columns={columns}
-                    dataSource={dataSource}
-                    scroll={{ x: 'max-content', y: 50 * 5 }}
-                    pagination={false}
-                />
-            </Card>
-        </div>
-        <div className=''>
-            {/* <Staff /> */}
-        </div>
-    </>
-  );
+            <div className=''>
+                {/* <Staff /> */}
+            </div>
+        </>
+    );
 };
 
 export default ReportTable;

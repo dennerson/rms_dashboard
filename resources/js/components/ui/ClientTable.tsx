@@ -422,6 +422,7 @@ const ClientTable: React.FC<{ onEdit: (data:Client) => void; refreshFlag: boolea
 
         },
     ];
+
     return (
         <Table
             className='text-center'

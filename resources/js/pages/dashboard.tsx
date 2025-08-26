@@ -72,26 +72,6 @@ export default function Dashboard() {
                                     </div>
                                 </div>
 
-                                {/* <div className='flex flex-wrap'>
-                                    <div className='flex-1'>
-                                        <Card>
-                                            <div className='flex'>
-                                                <div className='flex'>
-                                                    <Col span={80} pull={0}>
-                                                        <Card title="Success Appointments"  hoverable>
-                                                                <BarChart />
-                                                        </Card>
-                                                    </Col>
-                                                </div>
-                                                <div className='flex'>
-                                                    <Col span={90} push={10}>
-                                                        <Card>Hello</Card>
-                                                    </Col>
-                                                </div>
-                                            </div>
-                                        </Card>
-                                    </div>
-                                </div> */}
                                 <div className=''>
                                     <div className=''>
                                         <Card hoverable>
