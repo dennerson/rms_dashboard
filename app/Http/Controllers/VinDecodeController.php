@@ -49,6 +49,8 @@ class VinDecodeController extends Controller
                 'is_oversized' => $oversized,
                 'created_at' => now(),
                 'updated_at' => now(),
+                // insert additional data if needed
+                // also if needed make/insert the weight and wheelbase for reference
             ]);
 
             return response()->json([

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // })->middleware('auth:sanctum');
 
-use App\Http\Controllers\{ApiController, ZoneController, VehicleController, QuoteController, DistanceController, FeeController, VinDecodeController};
+use App\Http\Controllers\{ApiController, ZoneController, VehicleController, QuoteController, DistanceController, FeeController, VinDecodeController, ReportController};
 
 Route::get('/clients', [ApiController::class, 'getClients']);
 Route::post('/clients', [ApiController::class, 'createClient']);
@@ -24,8 +24,7 @@ Route::post('/branches/upload', [ApiController::class, 'uploadFileToBranch']);
 // quote
 Route::get('/distance', [DistanceController::class, 'getDistance']);
 Route::get('mileage-fee', [FeeController::class, 'mileageFee']);
-// Route::post('/check-zone', [ZoneController::class, 'check']);
 Route::post('/decode-vin', [VinDecodeController::class, 'decode']);
 
-// Route::get('/from-clients', [ClientController::class, 'index']);
-// Route::get('/fees', [FeeController::class, 'getFees']);
+// report
+Route::get('/report/export', [ReportController::class, 'export']);

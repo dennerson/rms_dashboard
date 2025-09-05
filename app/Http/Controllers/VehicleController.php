@@ -16,7 +16,7 @@ class VehicleController extends Controller
         $data = $response->json();
 
         $result = collect($data['Results'])->keyBy('Variable')->only(['Make', 'Model', 'Model Year']);
-        dd($result);
+        // dd($result);
 
         return response()->json($result);
     }

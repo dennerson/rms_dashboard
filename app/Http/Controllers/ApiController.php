@@ -135,6 +135,8 @@ class ApiController extends Controller
                         'keys_required' => strtoupper($row[26] ?? 'NO') === 'YES' ? 1 : 0,
                         'client_forms' => strtoupper($row[27] ?? 'NO') === 'YES' ? 1 : 0,
                         'lienholder_forms' => strtoupper($row[28] ?? 'NO') === 'YES' ? 1 : 0,
+                        // 'created_at' => now(),
+                        // 'updated_at' => now(),
                     ]);
                 }
             }
@@ -241,6 +243,8 @@ class ApiController extends Controller
                         'mileage_fee' => $row[11] ?? null,
                         'reservation' => strtoupper($row[12] ?? 'NO') === 'YES' ? 1 : 0,
                         'military' => strtoupper($row[13] ?? 'NO') === 'YES' ? 1 : 0,
+                        // 'created_at' => now(),
+                        // 'updated_at' => now(),
                     ]);
                 }
             }

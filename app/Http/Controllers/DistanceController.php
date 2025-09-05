@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class DistanceController extends Controller
 {
-     public function getDistance(Request $request)
+    public function getDistance(Request $request)
     {
         $destination = $request->query('destination');
 
@@ -64,13 +64,45 @@ class DistanceController extends Controller
                 'destination_address' => $nearest['destination_address'],
                 'distance' => $nearest['distance'],
                 'duration' => $nearest['duration'],
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
+            $origin = explode(', ', $nearest['origin_address']);
+            $originStateZip = explode(' ', $origin[1] ?? '');
+            $originZip = $originStateZip[1] ?? null;
+
+            // dd($zip);
             // save/update branch address in from_client_search
-            // DB::table('from_client_search')->updateOrInsert(
-            //     ['branch_address' => $zip],
-            //     ['branch_address' => $zip]
-            // );
+            DB::table('exports')->updateOrInsert(
+                ['zip' => $zip],
+                [
+                    'location' => $nearest['destination_address'] ?? 'PENDING',
+                    'miles' =>$nearest['distance'],
+                    'branch_zip' => $originZip ?? 'PENDING',
+                    'branch_location' => $nearest['origin_address'],
+                    // 'mileage'
+                    // 'vin'
+                    // 'size'
+                    // 'zone'
+                    'date' => now(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+
+                ]
+                // ['branch_address' => $zip]
+            );
+            // zip = destination_zip
+            // location = destination_address
+            // miles?
+            // branch_zip = get the 'origin' zip
+            // branch_location = origin_address
+            // mileage = distance
+            // vin?
+            // size (standard/oversize)
+            // zone = (military/reservation)
+            // date = date_search
+
 
             return response()->json([
                 'message' => 'Nearest location saved successfully',

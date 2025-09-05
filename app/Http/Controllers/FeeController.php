@@ -43,6 +43,8 @@ class FeeController extends Controller
                     'rounded'      => $rounded,
                     'mileageFee'   => $mileageFee,
                     'branch'       => $row->branch,
+                    'created_at' => now(),
+                    'updated_at' => now(),
                     // 'origin_address' => $row->branch_address,
                 ];
                 // dd($results);

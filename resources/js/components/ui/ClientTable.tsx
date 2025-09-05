@@ -402,17 +402,17 @@ const ClientTable: React.FC<{ onEdit: (data:Client) => void; refreshFlag: boolea
                     <Flex vertical gap="middle">
                         <Flex>
                             <Button
-                            color='blue'
-                            variant='text'
-                            size='small'
+                                color='blue'
+                                variant='text'
+                                size='small'
                             >
                                 <a onClick={() => onEdit(record)}><FilePenLine size={18}/></a>
                             </Button>
 
                             <Button
-                            color='volcano'
-                            variant='text'
-                            size='small'
+                                color='volcano'
+                                variant='text'
+                                size='small'
                             >
                                 <DeleteButton clientId={record.id} onDeleted={() => fetchClients(pagination.current, pagination.pageSize)}/>
                             </Button>

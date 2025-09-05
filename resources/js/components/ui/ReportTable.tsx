@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import { Card, Table, Button, Space } from 'antd';
 // import type { TableColumnsType } from 'antd';
 import { ExportOutlined,
@@ -187,6 +188,24 @@ const ReportTable: React.FC = () => {
         //   },
     ];
 
+    const handleExport = async () => {
+        try {
+            const response = await axios.get("/api/report/export", {
+                responseType: "blob", //important
+            });
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", "report.xlsx"); //filename
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        } catch (error) {
+            console.error("Export failed: ", error);
+        }
+    };
+
     return (
         <>
             <div className='mb-4'>
@@ -194,7 +213,7 @@ const ReportTable: React.FC = () => {
                     <div className='flex-1 min-w-[200px]'>
                         <h3 className='flex'><i><AuditOutlined /></i>Search Details </h3>
                     </div>
-                    <Button className=''><i><ExportOutlined /></i>export Excel</Button>
+                    <Button className='' onClick={handleExport}><i><ExportOutlined /></i>Export to Excel</Button>
                 </div>
                 <Card title=''  size='small' hoverable>
                     <Table<DataType>
